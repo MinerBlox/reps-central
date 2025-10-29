@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reps Central</title>
 
   <!-- Tailwind -->
@@ -15,144 +12,159 @@
       theme: {
         extend: {
           colors: {
-            accent: "#00AEEF",          /* Gemini blue */
+            accent: "#00AEEF",             /* Gemini blue */
             subtle: "#E5E7EB",
             primarydark: "#111827",
+            linkdead: "#EF4444",
+            lowstock: "#F59E0B",
           },
-          fontFamily: { sans: ["Inter", "sans-serif"] },
-        },
-      },
-    };
+          fontFamily: { sans: ["Inter","system-ui","sans-serif"] },
+          boxShadow: {
+            card: "0 10px 18px rgba(0,0,0,.06)"
+          }
+        }
+      }
+    }
   </script>
 
   <style>
-    body { background: #f8f8f8; }
+    body{ background:#F7F7F7; }
+    .header-gradient{
+      background: linear-gradient(135deg,#ffffff 60%, #e7fbff 100%);
+    }
+    /* Gemini left buttons look (thick, rounded, drop) */
+    .gem-btn{
+      display:flex;align-items:center;justify-content:center;
+      padding:14px 18px;border-radius:14px;
+      background:#00AEEF;color:#fff;font-weight:800;
+      box-shadow: 0 20px 35px rgba(0,174,239,.25);
+      transition: transform .08s ease, box-shadow .12s ease;
+    }
+    .gem-btn:hover{ transform: translateY(-1px); box-shadow: 0 26px 46px rgba(0,174,239,.28); }
+    .gem-btn:active{ transform: translateY(0); }
 
-    /* Ticker visuals */
-    .ticker-viewport {
-      height: 460px;                    /* fits two product cards vertically */
-      overflow: hidden;
-      position: relative;
-      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    /* Featured grid mask + continuous scroll track (Gemini feel) */
+    .mask-edges{
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%);
     }
-    .ticker-track {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .feed-viewport{ height: 560px; overflow:hidden; position:relative; }
+    .feed-track{ position:absolute; inset:0; will-change: transform; }
+    .feed-fade{ transition: opacity .45s ease; }
+
+    .card{ background:#fff; border:1px solid #E5E7EB; border-radius:16px; box-shadow: var(--tw-shadow),var(--tw-shadow-colored), 0 8px 20px rgba(0,0,0,.05); }
+    .band{ height:72px; border-radius:12px; }
+    .band.blue{ background:#2EA8FF; }
+    .band.yellow{ background:#FDBA21; }
+    .band.green{ background:#1DBE8A; }
+    .band.red{ background:#F19999; }
+
+    .status-pill{
+      display:inline-flex;align-items:center;padding:4px 10px;border-radius:9999px;
+      font-size:12px;font-weight:700;color:#fff;background-image:linear-gradient(90deg,#10B981,#00AEEF);
     }
-    .ticker-step {
-      transition: transform var(--ticker-duration, 6s) linear, opacity 0.6s ease;
-    }
-    .ticker-move {
-      transform: translateY(-50%);      /* move one card height (half the stack) */
+    .buy-bar{
+      display:flex;align-items:center;justify-content:center;
+      height:34px;border-radius:10px;background:#E5E7EB;color:#6B7280;font-weight:600;font-size:13px;
     }
 
-    .card {
-      background: white;
-      border: 1px solid #E5E7EB;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-      overflow: hidden;
-    }
-    .status-pill {
-      display: inline-flex; align-items:center;
-      padding: 3px 10px; border-radius: 9999px;
-      font-size: 12px; font-weight: 700; color: white;
-      background-image: linear-gradient(90deg, #10B981, #00AEEF);
-    }
-
-    /* Simple home header gradient */
-    .header-gradient {
-      background: linear-gradient(135deg, #ffffff 60%, #e0f7fa 100%);
-    }
+    /* simple helpers */
+    .hidden-el{ display:none; }
   </style>
 </head>
-
 <body class="font-sans text-gray-800">
-  <!-- Top bar -->
+
+  <!-- TOP BAR -->
   <header class="header-gradient border-b border-subtle">
     <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-      <h1 class="text-2xl md:text-3xl font-extrabold text-primarydark">Reps Central</h1>
-      <nav class="flex items-center gap-3">
-        <button
-          class="px-4 py-2 rounded-lg bg-accent text-white font-semibold"
-          onclick="navigate('data')">
-          View All Products
-        </button>
-      </nav>
+      <div class="flex items-center gap-3">
+        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-primarydark">Reps Central</h1>
+      </div>
+      <button class="gem-btn text-sm md:text-base" onclick="navigate('data')">View All Products</button>
     </div>
   </header>
 
-  <!-- HOME VIEW (Gemini-style auto scroll) -->
-  <main id="home-view" class="max-w-7xl mx-auto px-5 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div class="lg:col-span-5">
-        <h2 class="text-xl md:text-2xl font-bold text-primarydark mb-3">
-          New & Noteworthy
-        </h2>
-        <p class="text-gray-600 mb-6">
-          A rotating spotlight of the latest drops. Click any item to open the buy link in a new tab.
-        </p>
-        <button
-          class="home-nav-btn bg-accent text-white"
-          onclick="navigate('data')">
-          View All Products
-        </button>
-      </div>
+  <!-- BODY -->
+  <div id="home-view" class="max-w-7xl mx-auto px-5 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-      <!-- Ticker -->
-      <div class="lg:col-span-7">
-        <div class="ticker-viewport rounded-xl border border-subtle bg-white p-4">
-          <div id="tickerTrack" class="ticker-track"></div>
+      <!-- LEFT PANEL (matches Gemini) -->
+      <aside class="lg:col-span-5">
+        <div class="w-full bg-accent text-white rounded-xl h-48 flex items-center justify-center font-extrabold text-center tracking-wide shadow-card">
+          REPS CENTRAL LOGO
         </div>
-      </div>
+
+        <div class="mt-8 flex flex-col gap-5">
+          <button class="gem-btn w-full" onclick="navigate('data')">PRODUCTS (Spreadsheet)</button>
+          <a class="gem-btn w-full" href="https://www.reddit.com/r/StreetwearRep" target="_blank" rel="noopener">JOIN THE REDDIT</a>
+        </div>
+
+        <div class="mt-10 rounded-2xl bg-white border border-subtle p-5 shadow-card">
+          <p class="font-semibold mb-3 text-gray-700">Other Tools:</p>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/></svg>
+              <span class="text-accent cursor-pointer" onclick="navigate('link-converter')">Link Converter</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zM19 21a7 7 0 10-14 0"/></svg>
+              <span class="text-accent cursor-pointer">Trusted Sellers</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- RIGHT FEATURED GRID (Gemini style) -->
+      <section class="lg:col-span-7">
+        <h2 class="text-xl md:text-2xl font-bold text-primarydark text-center mb-4">Featured New Drops</h2>
+
+        <div class="feed-viewport mask-edges rounded-2xl border border-subtle bg-white shadow-card p-4">
+          <div id="feedTrack" class="feed-track">
+            <!-- cards will be injected here -->
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- Stats row (optional, kept minimal) -->
-    <section class="mt-12 py-8 border-t border-b border-subtle bg-white rounded-xl">
-      <div class="max-w-4xl mx-auto grid grid-cols-2 text-center">
+    <!-- STATS BAR -->
+    <div class="mt-10 bg-white rounded-2xl border border-subtle shadow-card p-6">
+      <div class="grid grid-cols-2 text-center">
         <div>
-          <span id="productCount" class="text-4xl md:text-5xl font-extrabold text-accent">0</span>
+          <span id="productCount" class="text-5xl font-extrabold text-accent">0</span>
           <p class="text-gray-700 mt-1">different products</p>
         </div>
         <div>
-          <span id="userCount" class="text-4xl md:text-5xl font-extrabold text-accent">0</span>
+          <span id="userCount" class="text-5xl font-extrabold text-accent">0</span>
           <p class="text-gray-700 mt-1">daily users</p>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
 
-  <!-- DATA (Spreadsheet) VIEW -->
+  <!-- FULL SPREADSHEET VIEW (same page; toggled) -->
   <section id="data-view" class="hidden max-w-7xl mx-auto px-5 py-10">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl md:text-3xl font-bold text-primarydark">Product Spreadsheet</h2>
-      <button class="px-4 py-2 rounded-lg border border-subtle font-semibold"
-              onclick="navigate('home')">
-        Back to Home
-      </button>
+      <button class="px-4 py-2 rounded-lg border border-subtle font-semibold" onclick="navigate('home')">Back to Home</button>
     </div>
 
-    <!-- Filters (UI only for now, keep as-is) -->
     <div class="mb-8 flex flex-col sm:flex-row gap-4">
       <div class="relative flex-grow">
         <input id="searchInput" type="text"
-               placeholder="Search by item name or category..."
-               class="w-full p-3 pl-3 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white"/>
+          placeholder="Search by item name or category..."
+          class="w-full p-3 pl-3 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white"/>
       </div>
 
       <div class="relative w-full sm:w-56" id="customFilterDropdown">
         <button id="filterDisplay" onclick="toggleCustomDropdown()"
-                class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
+          class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
           <span id="filterLabel">Filter: All Categories</span>
           <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
 
         <div id="filterOptions"
-             class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
+          class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
           <ul class="py-1">
             <li onclick="selectOption('all','Filter: All Categories')" class="cursor-pointer p-3 hover:bg-gray-50">Filter: All Categories</li>
             <li onclick="selectOption('shoes','Shoes')" class="cursor-pointer p-3 hover:bg-gray-50">Shoes</li>
@@ -163,7 +175,6 @@
       </div>
     </div>
 
-    <!-- Infinite Scroll Product Grid -->
     <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
     <footer class="mt-10 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
@@ -171,19 +182,17 @@
     </footer>
   </section>
 
-  <!-- ====== NAV + DROPDOWN HELPERS ====== -->
+  <!-- NAV + DROPDOWN -->
   <script>
-    function show(el) { el.classList.remove('hidden'); }
-    function hide(el) { el.classList.add('hidden'); }
-
-    window.navigate = function(page) {
+    function show(el){ el.classList.remove('hidden'); }
+    function hide(el){ el.classList.add('hidden'); }
+    window.navigate = function(page){
       const home = document.getElementById('home-view');
       const data = document.getElementById('data-view');
-      if (page === 'data') { hide(home); show(data); }
-      else { show(home); hide(data); }
+      if(page==='data'){ hide(home); show(data); }
+      else{ show(home); hide(data); }
     };
-
-    window.toggleCustomDropdown = function() {
+    window.toggleCustomDropdown = function(){
       const options = document.getElementById("filterOptions");
       const arrow = document.getElementById("dropdownArrow");
       const open = options.classList.contains("max-h-60");
@@ -191,147 +200,135 @@
       options.classList.toggle("max-h-0", open);
       arrow && arrow.classList.toggle("rotate-180", !open);
     };
-
-    window.selectOption = function(value, label) {
-      const lbl = document.getElementById("filterLabel");
-      const btn = document.getElementById("filterDisplay");
-      lbl.textContent = label;
-      btn.dataset.value = value;
+    window.selectOption = function(value,label){
+      document.getElementById("filterLabel").textContent = label;
+      document.getElementById("filterDisplay").dataset.value = value;
     };
   </script>
 
-  <!-- ====== HOMEPAGE TICKER (first 20 from CSV) ====== -->
+  <!-- HOMEPAGE FEED (first 20 from TSV; continuous upward scroll; two columns) -->
   <script>
-    (function() {
-      const DURATION_MS = 6000;                // same-feel speed
+    (function(){
       const MAX_ITEMS = 20;
-      const track = document.getElementById('tickerTrack');
-      let products = [];
-      let ptr = 0;                             // pointer to "current top" index
-      let animTimer = null;
+      const TRACK = document.getElementById('feedTrack');
 
-      function formatPrice(raw) {
-        if (raw == null) return "$0.00";
-        let s = String(raw).replace(/\$/g, "").replace(/,/g, "").trim();
+      const COLORMAP = (cat)=>{
+        const c = (cat||'').toLowerCase();
+        if(c.includes('shoe') || c.includes('sneaker')) return 'blue';
+        if(c.includes('cloth') || c.includes('tee') || c.includes('hoodie') || c.includes('jacket')) return 'yellow';
+        if(c.includes('access')) return 'red';
+        return 'green';
+      };
+
+      const fmtPrice = (raw)=>{
+        let s = String(raw||'').replace(/\$/g,'').replace(/,/g,'').trim();
         const n = Number(s);
-        if (!isFinite(n)) return `$${s}`;
-        return `$${n.toFixed(2)}`;
-      }
+        return isFinite(n) ? `$${n.toFixed(2)}` : `$${s}`;
+      };
 
-      function updateRef(url) {
-        try {
-          const u = new URL(url);
-          u.searchParams.set("ref", "100201678");
-          return u.toString();
-        } catch { return url; }
-      }
+      const withRef = (url)=>{
+        try{ const u=new URL(url); u.searchParams.set('ref','100201678'); return u.toString(); }
+        catch{ return url; }
+      };
 
-      function productCard(p) {
-        const div = document.createElement('a');
-        div.href = p.link || '#';
-        div.target = p.link ? '_blank' : '';
-        div.rel = 'noopener';
-        div.className = 'card block';
-        div.innerHTML = `
-          <div class="w-full h-56 bg-gray-100 overflow-hidden">
-            <img alt="${p.name}" src="${p.image}"
-                 class="w-full h-full object-cover"
-                 onerror="this.onerror=null;this.src='https://placehold.co/800x400/E5E7EB/6B7280?text=IMG';" />
+      function card(p){
+        const el = document.createElement('div');
+        el.className = 'card p-4';
+        const bandColor = COLORMAP(p.category);
+        el.innerHTML = `
+          <div class="band ${bandColor} mb-3 rounded-xl"></div>
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-semibold text-base md:text-lg text-primarydark pr-2 truncate">${p.name}</h3>
+            <span class="status-pill">Available</span>
           </div>
-          <div class="p-4">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="font-semibold text-lg text-primarydark truncate pr-2">${p.name}</h3>
-              <span class="status-pill">Available</span>
-            </div>
-            <div class="flex items-center justify-between text-sm">
-              <span class="font-bold text-green-600 text-xl">${p.price}</span>
-              <span class="text-gray-500">Category: ${p.category.charAt(0).toUpperCase()+p.category.slice(1)}</span>
-            </div>
+          <div class="flex items-center justify-between text-sm mb-3">
+            <span class="font-bold text-green-600 text-lg">${p.price}</span>
+            <span class="text-gray-500">Category: ${p.category?.[0]?.toUpperCase()}${p.category?.slice(1) || ''}</span>
           </div>
+          <div class="w-full h-40 rounded-lg overflow-hidden bg-gray-100 mb-3">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover"
+                 onerror="this.onerror=null;this.src='https://placehold.co/640x320/E5E7EB/6B7280?text=IMG';"/>
+          </div>
+          <a ${p.link ? `href="${p.link}" target="_blank" rel="noopener"` : ''} class="buy-bar">${p.link ? 'BUY ON MULEBUY' : '(Link Dead)'}</a>
         `;
-        return div;
+        return el;
       }
 
-      function renderPair(topIndex) {
-        track.innerHTML = '';
-        const a = products[topIndex % products.length];
-        const b = products[(topIndex + 1) % products.length];
+      function buildGrid(products){
+        // Build two columns that scroll upward together
+        const wrap = document.createElement('div');
+        wrap.className = 'grid grid-cols-1 md:grid-cols-2 gap-5 feed-fade';
 
-        const step = document.createElement('div');
-        step.className = 'ticker-step';
-        step.style.setProperty('--ticker-duration', DURATION_MS + 'ms');
+        const left = document.createElement('div');
+        const right = document.createElement('div');
 
-        // container with two stacked cards
-        const stack = document.createElement('div');
-        stack.className = 'grid grid-cols-1 gap-4';
-        stack.appendChild(productCard(a));
-        stack.appendChild(productCard(b));
-        step.appendChild(stack);
-        track.appendChild(step);
+        products.forEach((p,i)=> (i%2===0 ? left : right).appendChild(card(p)) );
 
-        // trigger the move on next frame
-        requestAnimationFrame(() => {
-          step.classList.add('ticker-move');
-        });
-
-        // after movement completes, advance pointer and render next
-        clearTimeout(animTimer);
-        animTimer = setTimeout(() => {
-          ptr = (ptr + 1) % products.length;
-          renderPair(ptr);
-        }, DURATION_MS);
+        wrap.appendChild(left); wrap.appendChild(right);
+        return wrap;
       }
 
-      async function loadFirst20() {
+      function startLoop(products){
+        // Duplicate content to allow seamless loop
+        TRACK.innerHTML = '';
+        const a = buildGrid(products);
+        const b = buildGrid(products);
+        TRACK.appendChild(a);
+        TRACK.appendChild(b);
+
+        let y = 0;
+        const step = 0.6; // px per frame ~ matches Gemini’s smooth pace
+        function tick(){
+          y -= step;
+          TRACK.style.transform = `translateY(${y}px)`;
+          const full = a.getBoundingClientRect().height + 20; // +gap
+          if(Math.abs(y) >= full){ y = 0; TRACK.style.transform = 'translateY(0)'; }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      async function load20(){
         const res = await fetch('gemini_products.csv', { cache: 'no-store' });
-        if (!res.ok) throw new Error('CSV not found. Put gemini_products.csv in the repo root.');
+        if(!res.ok) throw new Error('gemini_products.csv not found in repo root');
         const txt = await res.text();
         const lines = txt.split(/\r?\n/).filter(Boolean);
-
-        // Heuristic: if first line doesn't start with '[', treat as header and skip 1
         let i = /^\s*\[/.test(lines[0]) ? 0 : 1;
 
-        for (; i < lines.length && products.length < MAX_ITEMS; i++) {
-          const parts = lines[i].split('\t');     // TSV
-          if (parts.length < 3) continue;
-          const col1 = (parts[0] || '').trim();   // [name](link){price}%category%
-          const image = (parts[2] || '').trim();  // image url
+        const out = [];
+        for(; i<lines.length && out.length<MAX_ITEMS; i++){
+          const parts = lines[i].split('\t');
+          if(parts.length < 3) continue;
+          const col1 = (parts[0]||'').trim();  // [name](link){price}%category%
+          const image = (parts[2]||'').trim();
 
           const name = (col1.match(/\[([^\]]+)\]/) || [,''])[1].trim();
-          let link = (col1.match(/\(([^)]+)\)/) || [,''])[1].trim();
-          const priceRaw = (col1.match(/\{([^}]+)\}/) || [,''])[1].trim();
+          let link  = (col1.match(/\(([^)]+)\)/) || [,''])[1].trim();
+          const price = fmtPrice((col1.match(/\{([^}]+)\}/) || [,''])[1].trim());
           const category = (col1.match(/%([^%]+)%/) || [,''])[1].trim().toLowerCase();
 
-          if (!name) continue;
-          if (link) link = updateRef(link);
+          if(!name) continue;
+          if(link) link = withRef(link);
 
-          products.push({
-            id: products.length + 1,
-            name, link,
-            price: formatPrice(priceRaw),
-            category, image
-          });
+          out.push({ name, link, price, category, image });
         }
-
-        // Update stat counter (nice touch)
         const productCount = document.getElementById('productCount');
-        if (productCount) productCount.textContent = String(lines.length - (i > 0 ? 1 : 0));
+        if(productCount) productCount.textContent = String(lines.length - (i>0 ? 1 : 0));
+        return out;
       }
 
-      window.addEventListener('load', async () => {
-        try {
-          await loadFirst20();
-          if (products.length >= 2) {
-            renderPair(ptr);
+      window.addEventListener('load', async ()=>{
+        try{
+          const products = await load20();
+          if(products.length){
+            startLoop(products);
           }
-        } catch (e) {
-          console.error(e);
-        }
+        }catch(e){ console.error(e); }
       });
     })();
   </script>
 
-  <!-- Spreadsheet renderer (loads full CSV & infinite scroll) -->
+  <!-- Spreadsheet renderer (full list view) -->
   <script src="data-view-render.js"></script>
 </body>
 </html>
