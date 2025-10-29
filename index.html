@@ -1,211 +1,1064 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reps Central</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            accent: "#00AEEF",
-            subtle: "#E5E7EB",
-            primarydark: "#111827"
-          },
-          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
-          boxShadow: { card: "0 10px 18px rgba(0,0,0,.06)" }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reps Central Console</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use Inter font and define custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#111827', 
+                        'primary-light': '#FFFFFF',
+                        'accent': '#00AEEF', // Primary Accent Color (Blue)
+                        'subtle': '#E5E7EB', // Light gray border/separator
+                        'background-light': '#F8F8F8', // Main background
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
+    <style>
+        /* --- GLOBAL LIGHT MODE BASE STYLES --- */
+        body {
+            background-color: var(--background-light, #F8F8F8);
+            color: #4B5563; 
+        }
+        
+        /* Ensure titles and high-contrast text are dark */
+        .text-primary-dark {
+            color: #111827 !important; 
+        }
 
-  <style>
-    body {
-      background-color: #F8F8F8;
-      color: #4B5563;
-    }
+        /* Card styles for light mode */
+        .card, .tiled-product-card {
+            background-color: white !important; 
+            border-color: #E5E7EB !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06) !important;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px); 
+        }
+        .border-subtle { border-color: #E5E7EB; }
 
-    .header-gradient {
-      background: linear-gradient(135deg, #ffffff 60%, #e7fbff 100%);
-    }
+        /* --- HEADER STYLES (Fixed Light Gradient) --- */
+        .header-gradient {
+            background: linear-gradient(135deg, #ffffff 60%, #e0f7fa 100%);
+        }
 
-    /* --- LEFT PANEL: Gemini-identical sizing/spacing --- */
-    .left-panel { max-width: 420px; margin-left: 28px; }
-    .logo-box {
-      height: 180px; border-radius: 12px; background:#00AEEF; color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      font-weight: 800; letter-spacing:.5px; box-shadow: 0 10px 20px rgba(0,0,0,.06);
-    }
-    .gem-btn {
-      display:flex; align-items:center; justify-content:center;
-      height: 56px; width: 100%;
-      border-radius: 12px; font-weight: 800; color:#fff; background:#00AEEF;
-      box-shadow:
-        0 24px 36px rgba(0,174,239,.25),
-        inset 0 1px 0 rgba(255,255,255,.35);
-      transition: transform .08s ease, box-shadow .12s ease;
-    }
-    .gem-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 28px 48px rgba(0,174,239,.28), inset 0 1px 0 rgba(255,255,255,.35);
-    }
-    .gem-btn:active { transform: translateY(0); }
+        /* --- STATUS PILLS --- */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-size: 200% 100%;
+            transition: background 0.5s ease;
+            animation: subtle-shift-pill 4s linear infinite alternate;
+        }
 
-    .tools-card {
-      margin-top: 22px; background:#fff; border:1px solid #E5E7EB;
-      border-radius: 14px; padding: 18px 20px; box-shadow: 0 8px 20px rgba(0,0,0,.06);
-    }
-    .tool-link { color:#00AEEF; cursor:pointer; }
-    .tool-row { display:flex; align-items:center; gap:8px; }
+        @keyframes subtle-shift-pill {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .status-available { background-image: linear-gradient(90deg, #10B981, #00AEEF); color: white; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.4); }
+        .status-dead { background-image: linear-gradient(90deg, #EF4444, #EC4899); color: white; box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4); }
+        .status-low-stock { background-image: linear-gradient(90deg, #F59E0B, #F97316); color: white; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.4); }
+        .status-checking { background-image: linear-gradient(90deg, #64748B, #475569); color: white; box-shadow: 0 1px 3px rgba(100, 116, 139, 0.4); }
+        
+        /* --- HOME VIEW SPECIFIC STYLES --- */
+        .home-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center button text */
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .home-nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* --- CONTINUOUS SCROLL CSS (HOMEPAGE) --- */
+        .auto-scroll-viewport {
+            /* Height is set dynamically by JS to show exactly 2 rows + 1 gap */
+            height: 500px; 
+            overflow: hidden;
+            position: relative;
+            /* Create the fade effect using a mask image for the ends */
+            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+            padding: 1rem 0; 
+        }
+        
+        .scrolling-content-wrapper {
+            /* Animation properties are set by JS using CSS variables */
+            animation: autoScroll var(--scroll-duration, 15s) linear infinite;
+            will-change: transform;
+        }
 
-    /* right section placeholder styling (we'll refine next) */
-    .feed-placeholder {
-      background: white;
-      height: 560px;
-      border: 1px solid #E5E7EB;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-  </style>
+        @keyframes autoScroll {
+            /* Scrolls from 0 to the total height of the original content block, creating a seamless loop */
+            0% { transform: translateY(0); }
+            100% { transform: translateY(var(--scroll-distance, -1000px)); }
+        }
+
+        /* --- UI FEEDBACK ANIMATIONS --- */
+        @keyframes shake {
+          10%, 90% { transform: translate3d(-1px, 0, 0); }
+          20%, 80% { transform: translate3d(2px, 0, 0); }
+          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+          40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .animate-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+    </style>
 </head>
+<body class="text-gray-800 font-sans min-h-screen p-4 sm:p-8">
 
-<body class="font-sans text-gray-800">
+    <!-- Sidebar (Off-Canvas Menu) -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 p-6 shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 bg-white border-r border-subtle">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl font-bold text-accent">Navigation</h3>
+            <button onclick="toggleSidebar()" class="p-1 rounded-full text-gray-600 hover:bg-gray-100">
+                <!-- Close Icon (X) -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
 
-  <!-- TOP BAR -->
-  <header class="header-gradient border-b border-subtle">
-    <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-primarydark">Reps Central</h1>
-      </div>
-      <button class="gem-btn text-sm md:text-base w-auto px-5" onclick="navigate('data')">View All Products</button>
+        <nav class="flex flex-col space-y-3">
+            <!-- SIDEBAR LINKS -->
+            <button onclick="navigate('data')" class="text-left py-2 px-3 rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10h2m-2 0h2m2 0V7m2 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+                Go to Spreadsheet
+            </button>
+            <button onclick="navigate('link-converter')" class="text-left py-2 px-3 rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-2.5m0 5h2m0-5h2m0 0H9m7 0a4 4 0 00-4 4v2m0 0v2m0-4h2m-2 0h2m0 0h2m0 0h2"></path></svg>
+                Link Converter
+            </button>
+            <button class="text-left py-2 px-3 rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.104A9 9 0 0012 1m-1.765 1.765A9 9 0 003 12m18 0a9 9 0 01-9 9m-1.765-1.765A9 9 0 0121 12"></path></svg>
+                Trusted Sellers
+            </button>
+            <button class="text-left py-2 px-3 rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.857 2.193l-2.675 10.384A2 2 0 0118.427 22H5.573a2 2 0 01-1.936-2.533L5.836 12H10m-2 0V7A2 2 0 0110 5h4a2 2 0 012 2v5m-8 0h8"></path></svg>
+                Socials
+            </button>
+        </nav>
     </div>
-  </header>
+    <!-- Sidebar Backdrop -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300 opacity-0"></div>
 
-  <!-- BODY -->
-  <div id="home-view" class="max-w-7xl mx-auto px-5 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto">
 
-      <!-- LEFT PANEL (Gemini identical) -->
-      <aside class="lg:col-span-5">
-        <div class="left-panel">
-          <div class="logo-box">REPS CENTRAL LOGO</div>
-
-          <div class="mt-6 flex flex-col gap-5">
-            <button class="gem-btn" onclick="navigate('data')">PRODUCTS (Spreadsheet)</button>
-            <a class="gem-btn" href="https://www.reddit.com/r/StreetwearRep" target="_blank" rel="noopener">JOIN THE REDDIT</a>
-          </div>
-
-          <div class="tools-card">
-            <p class="font-semibold mb-3 text-gray-700">Other Tools:</p>
-            <div class="space-y-3 text-sm">
-              <div class="tool-row">
-                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
-                </svg>
-                <span class="tool-link" onclick="navigate('link-converter')">Link Converter</span>
-              </div>
-              <div class="tool-row">
-                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zM19 21a7 7 0 10-14 0"/>
-                </svg>
-                <span class="tool-link">Trusted Sellers</span>
-              </div>
+        <!-- Header and Console Title (Always Visible) - FIXED FOR LIGHT MODE -->
+        <header class="header-gradient flex justify-between items-center mb-6 pb-4 rounded-b-xl shadow-md px-4 sm:px-8 pt-4">
+            <!-- Logo / Home Button (Left Side) -->
+            <div class="flex items-center space-x-3">
+                <svg onclick="toggleSidebar()" class="w-8 h-8 text-accent cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                <h1 onclick="navigate('home')" class="text-3xl font-extrabold text-primary-dark tracking-tight cursor-pointer">
+                    Reps Central
+                </h1>
             </div>
-          </div>
-        </div>
-      </aside>
 
-      <!-- RIGHT PANEL placeholder -->
-      <section class="lg:col-span-7">
-        <h2 class="text-xl md:text-2xl font-bold text-primarydark text-center mb-4">Featured New Drops</h2>
-        <div class="feed-placeholder"></div>
-      </section>
+            <!-- Empty space on right to balance header -->
+            <div class="w-5 h-5"></div> 
+        </header>
+        
+        <!-- --- HOME SCREEN VIEW (Updated Layout) --- -->
+        <div id="home-view" class="py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 min-h-[70vh]">
+                
+                <!-- Left Column: Logo, Branding, and Main Navigation (Center Aligned) (5/12 split) -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-center space-y-6 p-4 lg:p-0">
+                    
+                    <!-- NEW LOGO -->
+                    <div class="cursor-pointer mb-6" onclick="navigate('home')">
+                        <img src="https://placehold.co/300x150/00AEEF/ffffff?text=REPS+CENTRAL+LOGO" alt="Reps Central Logo" class="w-full max-w-xs h-auto" />
+                    </div>
+
+                    <!-- Prominent Action Buttons (Center Aligned) -->
+                    <div class="w-full max-w-sm flex flex-col space-y-4">
+                         <button onclick="navigate('data')" class="home-nav-btn text-white bg-accent hover:bg-opacity-90 active:bg-opacity-100 shadow-xl shadow-accent/40 text-lg py-3">
+                            PRODUCTS (Spreadsheet)
+                        </button>
+                        <button class="home-nav-btn text-white bg-accent hover:bg-opacity-90 active:bg-opacity-100 shadow-xl shadow-accent/40 text-lg py-3">
+                            JOIN THE REDDIT
+                        </button>
+                    </div>
+
+                    <!-- Sub Navigation for other links -->
+                    <div class="pt-8 border-t border-subtle space-y-2 mt-8 w-full max-w-sm flex flex-col items-center">
+                        <p class="text-sm font-semibold text-primary-dark">Other Tools:</p>
+                        <!-- SUB NAV LINKS (Using text-center for alignment, but button text is left-aligned in flex) -->
+                        <div class="flex flex-col space-y-2 w-full">
+                            <button onclick="navigate('link-converter')" class="text-left py-1 px-2 text-sm rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-2.5m0 5h2m0-5h2m0 0H9m7 0a4 4 0 00-4 4v2m0 0v2m0-4h2m-2 0h2m0 0h2m0 0h2"></path></svg>
+                                Link Converter
+                            </button>
+                            <button class="text-left py-1 px-2 text-sm rounded-lg font-medium text-primary-dark hover:bg-gray-100 transition flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.104A9 9 0 0012 1m-1.765 1.765A9 9 0 003 12m18 0a9 9 0 01-9 9m-1.765-1.765A9 9 0 0121 12"></path></svg>
+                                Trusted Sellers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Scrolling Product Feed -->
+                <div class="lg:col-span-7 relative h-full min-h-[70vh] p-4 flex flex-col items-center">
+                    
+                    <h2 class="text-2xl font-bold text-primary-dark mb-4 self-start lg:self-center">Featured New Drops</h2>
+                    
+                    <!-- Auto-Scroll Viewport (Height set by JS to fit exactly 2 rows) -->
+                    <div id="autoScrollViewport" class="auto-scroll-viewport w-full max-w-lg lg:max-w-none">
+                        
+                        <!-- Scrolling Content Wrapper (Animated by CSS Keyframes) -->
+                        <div id="scrollingContent" class="scrolling-content-wrapper">
+                            
+                            <!-- Product Grid (Original content) -->
+                            <div id="productGrid" class="grid grid-cols-2 gap-4">
+                                
+                                <!-- Product Card 1 -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="https://placehold.co/400x128/00AEEF/ffffff?text=RUNNER+3.0" alt="Sneaker" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Performance Runner 3.0</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-green-600">$125.00</span>
+                                        <span class="status-pill status-available">Available</span>
+                                    </div>
+                                    <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
+                                        BUY ON MULEBUY
+                                    </button>
+                                </div>
+
+                                <!-- Product Card 2 -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="https://placehold.co/400x128/F59E0B/ffffff?text=CHRONOGRAPH" alt="Watch" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Minimalist Chrono</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-yellow-600">$299.00</span>
+                                        <span class="status-pill status-low-stock">Low Stock</span>
+                                    </div>
+                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
+                                        BUY ON MULEBUY
+                                    </button>
+                                </div>
+                                
+                                <!-- Product Card 3 -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="https://placehold.co/400x128/3B82F6/ffffff?text=BACKPACK" alt="Backpack" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Commuter Backpack Pro</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-green-600">$85.00</span>
+                                        <span class="status-pill status-available">Available</span>
+                                    </div>
+                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
+                                        BUY ON MULEBUY
+                                    </button>
+                                </div>
+
+                                 <!-- Product Card 4 (Dead Link) -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3 opacity-90">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden opacity-60">
+                                        <img src="https://placehold.co/400x128/EF4444/ffffff?text=LINK+DEAD" alt="Jacket" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Waterproof Tech Shell V2</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-red-600">N/A</span>
+                                        <span class="status-pill status-dead">Link Dead</span>
+                                    </div>
+                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition" disabled>
+                                        (Link Dead)
+                                    </button>
+                                </div>
+                                
+                                <!-- Product Card 5 (Checking) -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="https://placehold.co/400x128/FBBF24/ffffff?text=GLASSES" alt="Sunglasses" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Classic Polarized Shades</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-gray-600">$75.00</span>
+                                        <span class="status-pill status-checking">Checking</span>
+                                    </div>
+                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
+                                        BUY ON MULEBUY
+                                    </button>
+                                </div>
+
+                                <!-- Product Card 6 (Added for scroll height) -->
+                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
+                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="https://placehold.co/400x128/10B981/ffffff?text=TRAVEL+DUFFEL" alt="Backpack" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
+                                    </div>
+                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Travel Duffel XL</h3>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="font-bold text-green-600">$199.00</span>
+                                        <span class="status-pill status-available">Available</span>
+                                    </div>
+                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
+                                        BUY ON MULEBUY
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Cloned content is appended by JS for the seamless loop -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll-Triggered Statistics Section -->
+            <div id="statsSection" class="mt-16 py-12 border-t border-b border-subtle">
+                <div class="flex flex-col sm:flex-row justify-around items-center space-y-8 sm:space-y-0 text-center">
+                    
+                    <div class="flex flex-col items-center">
+                        <span id="productCount" class="text-6xl font-extrabold text-accent">0</span>
+                        <p class="text-lg font-medium text-gray-700 mt-2">different products</p>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span id="userCount" class="text-6xl font-extrabold text-accent">0</span>
+                        <p class="text-lg font-medium text-gray-700 mt-2">daily users</p>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- --- DATA (SPREADSHEET) VIEW --- -->
+        <div id="data-view" class="hidden py-10">
+            
+            <h2 class="text-3xl font-bold text-primary-dark mb-6">Product Spreadsheet</h2>
+
+            <!-- Search and Filters -->
+            <div class="mb-10 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <!-- Search Bar -->
+                <div class="relative flex-grow">
+                    <input type="text" placeholder="Search by item name or category..." 
+                           class="w-full p-3 pl-10 border border-subtle rounded-xl 
+                                  focus:ring-2 focus:ring-accent focus:border-accent 
+                                  transition duration-300 shadow-sm
+                                  bg-white text-primary-dark" />
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+
+                <!-- Custom Filter Dropdown (SLEEK UI) -->
+                <div class="relative w-full sm:w-48 z-10" id="customFilterDropdown">
+                    <!-- Display Button (Click to toggle dropdown) -->
+                    <button id="filterDisplay" onclick="toggleCustomDropdown()" 
+                            class="w-full p-3 pr-10 border border-subtle rounded-xl shadow-sm cursor-pointer 
+                                flex justify-between items-center font-medium text-primary-dark
+                                bg-white hover:shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-accent"
+                            data-value="all">
+                        <span id="filterLabel">Filter: All Categories</span>
+                        <!-- Custom Dropdown Arrow (Rotates on click) -->
+                        <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform duration-300" 
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+
+                    <!-- Dropdown Options Container (Uses max-h-0 for smooth close transition) -->
+                    <div id="filterOptions" 
+                        class="absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl 
+                                border border-subtle overflow-hidden 
+                                max-h-0 transition-all duration-300 ease-in-out" 
+                        style="z-index: 20;">
+                        <ul class="py-1">
+                            <li class="cursor-pointer p-3 hover:bg-subtle text-primary-dark" 
+                                onclick="selectOption('all', 'Filter: All Categories')">Filter: All Categories</li>
+                            <li class="cursor-pointer p-3 hover:bg-subtle text-primary-dark" 
+                                onclick="selectOption('shoes', 'Shoes')">Shoes</li>
+                            <li class="cursor-pointer p-3 hover:bg-subtle text-primary-dark" 
+                                onclick="selectOption('clothing', 'Clothing')">Clothing</li>
+                            <li class="cursor-pointer p-3 hover:bg-subtle text-primary-dark" 
+                                onclick="selectOption('accessories', 'Accessories')">Accessories</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Grid/Listing Area -->
+            <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Card 1: Available Product (Large Image Design) -->
+                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
+                        <img src="https://placehold.co/400x192/00AEEF/ffffff?text=PERFORMANCE+RUNNER+3.0" alt="Sneaker" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
+                    </div>
+                    <div class="px-2 pb-2">
+                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Performance Runner 3.0</h3>
+                        <p class="text-sm text-gray-500 mb-3">Category: Footwear | Vendor: Alpha Gear</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-green-600">$125.00</span>
+                            <span class="status-pill status-available">Available</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
+                        <a href="#" class="text-sm text-accent font-medium hover:underline flex items-center">
+                            View Details
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                        <a href="#" class="text-xs text-gray-400 hover:text-accent transition">
+                            Compare
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 2: Link Dead Product (Large Image Design) -->
+                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden opacity-60">
+                         <img src="https://placehold.co/400x192/EF4444/ffffff?text=LINK+DEAD" alt="Jacket" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
+                    </div>
+                    <div class="px-2 pb-2">
+                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Waterproof Tech Shell V2</h3>
+                        <p class="text-sm text-gray-500 mb-3">Category: Outerwear | Vendor: RainCo</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-red-600">N/A</span>
+                            <span class="status-pill status-dead">Link Dead</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
+                        <button class="text-sm text-gray-400 font-medium cursor-not-allowed flex items-center" disabled>
+                            View Details
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </button>
+                        <a href="#" class="text-xs text-gray-400 hover:text-accent transition">
+                            Archive
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 3: Low Stock Product (Large Image Design) -->
+                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
+                        <img src="https://placehold.co/400x192/F59E0B/ffffff?text=CHRONOGRAPH" alt="Watch" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
+                    </div>
+                    <div class="px-2 pb-2">
+                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Minimalist Chrono</h3>
+                        <p class="text-sm text-gray-500 mb-3">Category: Accessories | Vendor: TimeLink</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-yellow-600">$299.00</span>
+                            <span class="status-pill status-low-stock">Low Stock</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
+                        <a href="#" class="text-sm text-accent font-medium hover:underline flex items-center">
+                            View Details
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a
+                        ><a href="#" class="text-xs text-gray-400 hover:text-accent transition">
+                            Order More
+                        </a>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer/Summary -->
+            <footer class="mt-12 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
+                Displaying 3 of 124 total items. Sleek data management by Gemini.
+            </footer>
+        </div>
+
+        <!-- --- LINK CONVERTER VIEW --- -->
+        <div id="link-converter-view" class="hidden py-10">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-primary-dark mb-4 text-center">Link Converter</h2>
+                <p class="text-center text-gray-600 mb-8">A simple, sleek link converter with all your favourite agents.</p>
+
+                <div class="card bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <!-- Input Field -->
+                    <div class="mb-6">
+                        <label for="linkInput" class="block text-sm font-medium text-gray-700 mb-2">Original Link (any agent or source)</label>
+                        <div class="relative">
+                            <input type="url" id="linkInput" placeholder="Enter your link here..."
+                                   class="w-full p-3 pl-10 border border-subtle rounded-xl
+                                          focus:ring-2 focus:ring-accent focus:border-accent
+                                          transition duration-300 shadow-sm
+                                          bg-gray-50 text-primary-dark" />
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Convert Button -->
+                    <button onclick="convertLink()" class="w-full home-nav-btn text-white bg-accent hover:bg-opacity-90 active:bg-opacity-100 shadow-lg shadow-accent/40 text-lg py-3 mb-6">
+                        Convert Link
+                    </button>
+
+                    <!-- Output Area -->
+                    <div id="outputArea" class="hidden mt-6">
+                        <div id="resultsList" class="space-y-3">
+                           <!-- JS will populate this area -->
+                        </div>
+                    </div>
+                    <p id="converterError" class="text-red-600 text-center mt-4 h-4"></p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- STATS BAR -->
-    <div class="mt-10 bg-white rounded-2xl border border-subtle shadow-card p-6">
-      <div class="grid grid-cols-2 text-center">
-        <div>
-          <span id="productCount" class="text-5xl font-extrabold text-accent">0</span>
-          <p class="text-gray-700 mt-1">different products</p>
-        </div>
-        <div>
-          <span id="userCount" class="text-5xl font-extrabold text-accent">0</span>
-          <p class="text-gray-700 mt-1">daily users</p>
-        </div>
-      </div>
-    </div>
-  </div>
+    <!-- JavaScript for Page Navigation, Auto-Scroll, Custom Dropdown, and Stats Counter -->
+    <script>
+        // --- PAGE NAVIGATION & SIDEBAR LOGIC ---
+        const homeView = document.getElementById('home-view');
+        const dataView = document.getElementById('data-view');
+        const linkConverterView = document.getElementById('link-converter-view');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        const body = document.body;
 
-  <!-- FULL SPREADSHEET VIEW (hidden for now) -->
-  <section id="data-view" class="hidden max-w-7xl mx-auto px-5 py-10">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl md:text-3xl font-bold text-primarydark">Product Spreadsheet</h2>
-      <button class="px-4 py-2 rounded-lg border border-subtle font-semibold" onclick="navigate('home')">Back to Home</button>
-    </div>
+        let isSidebarOpen = false;
 
-    <div class="mb-8 flex flex-col sm:flex-row gap-4">
-      <div class="relative flex-grow">
-        <input id="searchInput" type="text"
-          placeholder="Search by item name or category..."
-          class="w-full p-3 pl-3 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white"/>
-      </div>
+        function toggleSidebar() {
+            isSidebarOpen = !isSidebarOpen;
+            if (isSidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarBackdrop.classList.remove('hidden');
+                setTimeout(() => sidebarBackdrop.classList.remove('opacity-0'), 10);
+                body.classList.add('overflow-hidden'); 
+            } else {
+                sidebarBackdrop.classList.add('opacity-0');
+                sidebar.classList.add('-translate-x-full');
+                setTimeout(() => {
+                    sidebarBackdrop.classList.add('hidden');
+                    body.classList.remove('overflow-hidden');
+                }, 300); 
+            }
+        }
 
-      <div class="relative w-full sm:w-56" id="customFilterDropdown">
-        <button id="filterDisplay" onclick="toggleCustomDropdown()"
-          class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
-          <span id="filterLabel">Filter: All Categories</span>
-          <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
+        function navigate(page) {
+            // Close sidebar if open
+            if (isSidebarOpen) {
+                toggleSidebar();
+            }
 
-        <div id="filterOptions"
-          class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
-          <ul class="py-1">
-            <li onclick="selectOption('all','Filter: All Categories')" class="cursor-pointer p-3 hover:bg-gray-50">Filter: All Categories</li>
-            <li onclick="selectOption('shoes','Shoes')" class="cursor-pointer p-3 hover:bg-gray-50">Shoes</li>
-            <li onclick="selectOption('clothing','Clothing')" class="cursor-pointer p-3 hover:bg-gray-50">Clothing</li>
-            <li onclick="selectOption('accessories','Accessories')" class="cursor-pointer p-3 hover:bg-gray-50">Accessories</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+            // Hide all views first
+            homeView.classList.add('hidden');
+            dataView.classList.add('hidden');
+            linkConverterView.classList.add('hidden');
 
-    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
+            // Stop scroll animation when leaving home (can be general)
+            const content = document.getElementById('scrollingContent');
+            if (content) content.style.animationPlayState = 'paused';
 
-    <footer class="mt-10 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
-      Displaying items...
-    </footer>
-  </section>
 
-  <!-- NAV LOGIC -->
-  <script>
-    function show(el){ el.classList.remove('hidden'); }
-    function hide(el){ el.classList.add('hidden'); }
-    window.navigate = function(page){
-      const home = document.getElementById('home-view');
-      const data = document.getElementById('data-view');
-      if(page==='data'){ hide(home); show(data); }
-      else{ show(home); hide(data); }
-    };
-    window.toggleCustomDropdown = function(){
-      const options = document.getElementById("filterOptions");
-      const arrow = document.getElementById("dropdownArrow");
-      const open = options.classList.contains("max-h-60");
-      options.classList.toggle("max-h-60", !open);
-      options.classList.toggle("max-h-0", open);
-      arrow && arrow.classList.toggle("rotate-180", !open);
-    };
-    window.selectOption = function(value,label){
-      document.getElementById("filterLabel").textContent = label;
-      document.getElementById("filterDisplay").dataset.value = value;
-    };
-  </script>
+            // Route to new page
+            if (page === 'home') {
+                homeView.classList.remove('hidden');
+                // Restart scroll animation and set up stat counter observer
+                setupAutoScroll();
+                setupStatCounterObserver();
+            } else if (page === 'data') {
+                dataView.classList.remove('hidden');
+                // Stop scroll animation when leaving home
+                const content = document.getElementById('scrollingContent');
+                if (content) content.style.animationPlayState = 'paused';
+            } else if (page === 'link-converter') {
+                linkConverterView.classList.remove('hidden');
+            }
+        }
+
+        // --- CONTINUOUS AUTO-SCROLL LOGIC (HOMEPAGE) ---
+
+        function setupAutoScroll() {
+            const viewport = document.getElementById('autoScrollViewport');
+            const content = document.getElementById('scrollingContent');
+            const productGrid = document.getElementById('productGrid');
+
+            if (!content || !productGrid || !viewport) return;
+
+            // 1. Ensure content is cloned exactly once for the seamless loop
+            let clonedGrid = document.getElementById('productGridClone');
+            if (!clonedGrid) {
+                clonedGrid = productGrid.cloneNode(true);
+                clonedGrid.id = 'productGridClone';
+                content.appendChild(clonedGrid);
+            }
+
+            // Must wait for layout calculation
+            setTimeout(() => {
+                const totalContentHeight = productGrid.offsetHeight; 
+                
+                if (totalContentHeight === 0) return;
+
+                // --- MODIFIED CALCULATION FOR 2 ROWS ---
+                const cardElement = productGrid.children[0];
+                if (!cardElement) return;
+
+                const cardHeight = cardElement.offsetHeight; 
+                const gapSize = 16; // gap-4 is 1rem (16px) in Tailwind
+
+                // 2 rows = (2 * cardHeight) + (1 * gapSize)
+                const newViewportHeight = (2 * cardHeight) + (1 * gapSize);
+                viewport.style.height = `${newViewportHeight}px`;
+
+                // Set CSS variables for continuous animation
+                const scrollDistance = totalContentHeight; 
+                
+                // Set duration: Adjust speed (e.g., 1 second per 50 pixels scrolled is a good pace)
+                const scrollDuration = scrollDistance / 50; 
+
+                content.style.setProperty('--scroll-distance', `-${scrollDistance}px`);
+                content.style.setProperty('--scroll-duration', `${scrollDuration}s`);
+
+                // Start or restart the animation
+                content.style.animationPlayState = 'running';
+
+            }, 500); 
+        }
+
+        // --- COUNT-UP ANIMATION LOGIC ---
+
+        // Flag to ensure the animation only runs once
+        let animationTriggered = false;
+
+        // Counter animation function
+        function animateCounter(elementId, targetValue, duration = 2000) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            let startTimestamp = null;
+            const startValue = 0;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = timestamp - startTimestamp;
+                
+                // Calculate current value based on progress (ease out effect)
+                const fraction = Math.min(progress / duration, 1);
+                let currentValue = Math.floor(fraction * targetValue);
+
+                // Add plus sign for visual flair
+                element.textContent = currentValue.toLocaleString() + "+";
+
+                if (progress < duration) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.textContent = targetValue.toLocaleString() + "+";
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // Intersection Observer to trigger the animation when in view
+        function setupStatCounterObserver() {
+            if (animationTriggered) return; // Prevent re-triggering
+
+            const statsSection = document.getElementById('statsSection');
+            if (!statsSection) return;
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animationTriggered) {
+                        // When the section comes into view, start the animations
+                        animateCounter('productCount', 2000, 2000);
+                        // Delay the second counter slightly
+                        setTimeout(() => animateCounter('userCount', 130, 2000), 300); 
+                        
+                        animationTriggered = true; // Mark as triggered
+                        observer.unobserve(entry.target); // Stop observing
+                    }
+                });
+            }, {
+                root: null, // viewport
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            observer.observe(statsSection);
+        }
+
+
+        // --- CUSTOM DROPDOWN LOGIC ---
+        let isDropdownOpen = false;
+
+        function toggleCustomDropdown() {
+            const optionsContainer = document.getElementById('filterOptions');
+            const arrow = document.getElementById('dropdownArrow');
+
+            if (isDropdownOpen) {
+                // Close: set max-height to 0
+                optionsContainer.classList.remove('max-h-60'); 
+                optionsContainer.classList.add('max-h-0');
+                arrow.classList.remove('rotate-180');
+            } else {
+                // Open: set max-height to allow content (max-h-60 is 15rem or 240px)
+                optionsContainer.classList.remove('max-h-0');
+                optionsContainer.classList.add('max-h-60'); 
+                arrow.classList.add('rotate-180');
+            }
+            isDropdownOpen = !isDropdownOpen;
+        }
+
+        function selectOption(value, label) {
+            const displayLabel = document.getElementById('filterLabel');
+            const displayButton = document.getElementById('filterDisplay');
+
+            displayLabel.textContent = label;
+            displayButton.setAttribute('data-value', value);
+            
+            console.log("Filtering by category: " + value);
+
+            toggleCustomDropdown(); // Close after selection
+        }
+        
+        // Close the dropdown if user clicks outside of the custom component
+        document.addEventListener('click', (event) => {
+            const dropdown = document.getElementById('customFilterDropdown');
+            if (isDropdownOpen && dropdown && !dropdown.contains(event.target)) {
+                // Only call the closing logic if it's open
+                toggleCustomDropdown();
+            }
+        });
+
+
+        // --- LINK CONVERTER LOGIC (from Python) ---
+
+        const universalLinkConverter = {
+            // -------------------- ID extractors for raw sources --------------------
+            taobao_id(url) {
+                const q = new URL(url).searchParams;
+                for (const k of ["id", "item_id", "default_item_id"]) {
+                    if (q.has(k) && q.get(k)) return q.get(k);
+                }
+                return null;
+            },
+            weidian_id(url) {
+                const q = new URL(url).searchParams;
+                if (q.has("itemID") && q.get("itemID")) return q.get("itemID");
+                const m = url.match(/(?:itemID|id)=([0-9]{6,})/i);
+                return m ? m[1] : null;
+            },
+            ali1688_id(url) {
+                const m = url.match(/\/offer\/(\d+)\.html/);
+                return m ? m[1] : null;
+            },
+
+            // -------------------- Canonical builders for raw sources --------------------
+            canonical_taobao_url: (id) => `https://item.taobao.com/item.htm?id=${id}`,
+            canonical_weidian_url: (id) => `https://weidian.com/item.html?itemID=${id}`,
+            canonical_1688_url: (id) => `https://detail.1688.com/offer/${id}.html`,
+
+            // -------------------- Safe unquote (handles single/double encoding) --------------------
+            safe_unquote_twice(s) {
+                try { return decodeURIComponent(decodeURIComponent(s)); } 
+                catch (e) {
+                    try { return decodeURIComponent(s); } 
+                    catch (e2) { return s; }
+                }
+            },
+
+            // -------------------- Try to pull raw URL out of agent links --------------------
+            extract_raw_from_wrapper(url) {
+                const u = new URL(url);
+                const q = u.searchParams;
+
+                for (const key of ["url", "productLink", "link"]) {
+                    if (q.has(key) && q.get(key)) return this.safe_unquote_twice(q.get(key));
+                }
+
+                if (u.hash) {
+                    const fragment = u.hash.substring(1); // remove #
+                    const fragmentPart = fragment.split("?")[1] || fragment;
+                    const fq = new URLSearchParams(fragmentPart);
+                    if (fq.has("productLink") && fq.get("productLink")) {
+                        return this.safe_unquote_twice(fq.get("productLink"));
+                    }
+                }
+                return null;
+            },
+
+            // -------------------- Reverse-map agent link -> (source, id) when only ID present --------------------
+            reverse_map_agent(url) {
+                const host = new URL(url).hostname.toLowerCase();
+                const q = new URL(url).searchParams;
+
+                let m = url.match(/\/item-(micro-)?(1688-)?(\d+)\.html/);
+                if (m) {
+                    if (m[1]) return ["weidian", m[3]]; // micro-
+                    if (m[2]) return ["1688", m[3]]; // 1688-
+                    return ["taobao", m[3]];
+                }
+                
+                m = url.match(/\/agent\/(taobao|weidian|1688)\/(\d+)\.html/);
+                if (m) return [m[1], m[2]];
+
+                if (q.has("id") && q.get("id")) {
+                    const plat = (q.get("platform") || q.get("shop_type") || "").toLowerCase();
+                    const _id = q.get("id");
+                    if (plat.includes("taobao")) return ["taobao", _id];
+                    if (plat.includes("weidian")) return ["weidian", _id];
+                    if (plat.includes("ali_1688") || plat.includes("1688")) return ["1688", _id];
+
+                    if (host.includes("acbuy.com")) {
+                        const src = (q.get("source") || "").toUpperCase();
+                        return [{ "TB": "taobao", "WD": "weidian", "AL": "1688" }[src], _id];
+                    }
+                    if (host.includes("orientdig.com")) {
+                        const st = (q.get("shop_type") || "").toLowerCase();
+                         return [{ "taobao": "taobao", "weidian": "weidian", "ali_1688": "1688" }[st], _id];
+                    }
+                }
+
+                m = url.match(/\/products?\/(\d+)\/(\d+)/) || url.match(/\/product\/(\d+)\/(\d+)/);
+                if (m) {
+                    const tcode = parseInt(m[1]);
+                    const _id = m[2];
+                    let mapping = {};
+                    if (host.includes("ponybuy.com")) mapping = { 1: "taobao", 2: "1688", 3: "weidian" };
+                    else if (host.includes("usfans.com")) mapping = { 1: "1688", 2: "taobao", 3: "weidian" };
+                    else mapping = { 0: "1688", 1: "taobao", 2: "weidian" }; // hipobuy/hoobuy/oopbuy
+                    return [mapping[tcode], _id];
+                }
+
+                if (host.includes("cnshopper.com") && q.has("keyword") && q.get("keyword")) {
+                    const plat = (q.get("platform") || "").toLowerCase();
+                    const _id = q.get("keyword");
+                    if (["taobao", "weidian", "1688"].includes(plat)) return [plat, _id];
+                }
+                
+                return [null, null];
+            },
+            
+            _enc: (url) => encodeURIComponent(url),
+
+            taobao_links(src_url) {
+                const _id = this.taobao_id(src_url);
+                if (!_id) throw new Error("Taobao id not found");
+                const enc = this._enc(src_url);
+                return {
+                    "cnfans": `https://cnfans.com/product?id=${_id}&platform=TAOBAO`, "mlubuy": `https://mlubuy.com/product?id=${_id}&platform=TAOBAO`,
+                    "lovegobuy": `https://www.lovegobuy.com/product?id=${_id}&shop_type=taobao`, "joygogo": `https://joygogo.com/product?id=${_id}&platform=TAOBAO`,
+                    "orientdig": `https://orientdig.com/product?shop_type=taobao&id=${_id}`, "acbuy": `https://www.acbuy.com/product?id=${_id}&source=TB`,
+                    "hipobuy": `https://hipobuy.com/product/1/${_id}`, "ponybuy": `https://www.ponybuy.com/products/1/${_id}`,
+                    "hoobuy": `https://www.hoobuy.com/product/1/${_id}`, "usfans": `https://www.usfans.com/product/2/${_id}`,
+                    "cssbuy": `https://www.cssbuy.com/item-${_id}.html`, "basetao": `https://www.basetao.com/best-taobao-agent-service/products/agent/taobao/${_id}.html`,
+                    "kakobuy": `https://www.kakobuy.com/item/details?url=${enc}`, "allchinabuy": `https://www.allchinabuy.com/en/page/buy?from=search-input&url=${enc}`,
+                    "superbuy": `https://www.superbuy.com/en/page/buy?from=search-input&url=${enc}`, "kameymall": `https://www.kameymall.com/purchases/search/item?url=${enc}`,
+                    "eastmallbuy": `https://eastmallbuy.com/index/item/index.html?searchlang=en&url=${enc}`, "hubbuycn": `https://www.hubbuycn.com/product/item?url=${enc}`,
+                    "loonbuy": `https://www.loongbuy.com/product-details?url=${enc}`, "itaobuy": `https://www.itaobuy.com/product-detail?url=${enc}`,
+                    "sugargoo": `https://www.sugargoo.com/#/home/productDetail?productLink=${enc}`, "cnshopper": `https://cnshopper.com/goods/detail?keyword=${_id}&platform=taobao`,
+                };
+            },
+            weidian_links(src_url) {
+                const _id = this.weidian_id(src_url);
+                if (!_id) throw new Error("Weidian itemID not found");
+                const enc = this._enc(src_url);
+                return {
+                    "cnfans": `https://cnfans.com/product?id=${_id}&platform=WEIDIAN`, "mlubuy": `https://mlubuy.com/product?id=${_id}&platform=WEIDIAN`,
+                    "joygogo": `https://joygogo.com/product?id=${_id}&platform=WEIDIAN`, "acbuy": `https://www.acbuy.com/product?id=${_id}&source=WD`,
+                    "lovegobuy": `https://www.lovegobuy.com/product?id=${_id}&shop_type=weidian`, "orientdig": `https://orientdig.com/product?shop_type=weidian&id=${_id}`,
+                    "hipobuy": `https://hipobuy.com/product/2/${_id}`, "hoobuy": `https://www.hoobuy.com/product/2/${_id}`,
+                    "ponybuy": `https://www.ponybuy.com/products/3/${_id}`, "usfans": `https://www.usfans.com/product/3/${_id}`,
+                    "oopbuy": `https://www.oopbuy.com/product/weidian/${_id}`, "cssbuy": `https://www.cssbuy.com/item-micro-${_id}.html`,
+                    "basetao": `https://www.basetao.com/best-taobao-agent-service/products/agent/weidian/${_id}.html`, "kakobuy": `https://www.kakobuy.com/item/details?url=${enc}`,
+                    "allchinabuy": `https://www.allchinabuy.com/en/page/buy?from=search-input&url=${enc}`, "superbuy": `https://www.superbuy.com/en/page/buy?from=search-input&url=${enc}`,
+                    "kameymall": `https://www.kameymall.com/purchases/search/item?url=${enc}`, "eastmallbuy": `https://eastmallbuy.com/index/item/index.html?searchlang=en&url=${enc}`,
+                    "hubbuycn": `https://www.hubbuycn.com/product/item?url=${enc}`, "loonbuy": `https://www.loongbuy.com/product-details?url=${enc}`,
+                    "itaobuy": `https://www.itaobuy.com/product-detail?url=${enc}`, "sugargoo": `https://www.sugargoo.com/#/home/productDetail?productLink=${enc}`,
+                    "cnshopper": `https://cnshopper.com/goods/detail?keyword=${_id}&platform=weidian`,
+                };
+            },
+            a1688_links(src_url) {
+                const _id = this.ali1688_id(src_url);
+                if (!_id) throw new Error("1688 offer id not found");
+                const enc = this._enc(src_url);
+                return {
+                    "cnfans": `https://cnfans.com/product?id=${_id}&platform=ALI_1688`, "mlubuy": `https://mlubuy.com/product?id=${_id}&platform=ALI_1688`,
+                    "lovegobuy": `https://www.lovegobuy.com/product?id=${_id}&shop_type=ali_1688`, "joygogo": `https://joygogo.com/product?id=${_id}&platform=ALI_1688`,
+                    "orientdig": `https://orientdig.com/product?shop_type=ali_1688&id=${_id}`, "acbuy": `https://www.acbuy.com/product?id=${_id}&source=AL`,
+                    "hipobuy": `https://hipobuy.com/product/0/${_id}`, "hoobuy": `https://www.hoobuy.com/product/0/${_id}`,
+                    "ponybuy": `https://www.ponybuy.com/products/2/${_id}`, "oopbuy": `https://www.oopbuy.com/product/0/${_id}`,
+                    "usfans": `https://www.usfans.com/product/1/${_id}`, "cssbuy": `https://www.cssbuy.com/item-1688-${_id}.html`,
+                    "basetao": `https://www.basetao.com/best-taobao-agent-service/products/agent/1688/${_id}.html`, "kakobuy": `https://www.kakobuy.com/item/details?url=${enc}`,
+                    "allchinabuy": `https://www.allchinabuy.com/en/page/buy?from=search-input&url=${enc}`, "superbuy": `https://www.superbuy.com/en/page/buy?from=search-input&url=${enc}`,
+                    "kameymall": `https://www.kameymall.com/purchases/search/item?url=${enc}`, "eastmallbuy": `https://eastmallbuy.com/index/item/index.html?searchlang=en&url=${enc}`,
+                    "hubbuycn": `https://www.hubbuycn.com/product/item?url=${enc}`, "loonbuy": `https://www.loongbuy.com/product-details?url=${enc}`,
+                    "itaobuy": `https://www.itaobuy.com/product-detail?url=${enc}`, "sugargoo": `https://www.sugargoo.com/#/home/productDetail?productLink=${enc}`,
+                    "cnshopper": `https://cnshopper.com/goods/detail?keyword=${_id}&platform=1688`,
+                };
+            },
+            
+            normalize_input(url) {
+                const host = new URL(url).hostname.toLowerCase();
+
+                if (["taobao.com", "tmall.com", "tmall.hk"].some(h => host.includes(h))) {
+                    const _id = this.taobao_id(url);
+                    if (_id) return ["taobao", this.canonical_taobao_url(_id), _id];
+                }
+                if (host.includes("weidian.com")) {
+                    const _id = this.weidian_id(url);
+                    if (_id) return ["weidian", this.canonical_weidian_url(_id), _id];
+                }
+                if (host.includes("1688.com")) {
+                    const _id = this.ali1688_id(url);
+                    if (_id) return ["1688", this.canonical_1688_url(_id), _id];
+                }
+                
+                const raw = this.extract_raw_from_wrapper(url);
+                if (raw) return this.normalize_input(raw);
+
+                const [src, _id] = this.reverse_map_agent(url);
+                if (src === "taobao" && _id) return ["taobao", this.canonical_taobao_url(_id), _id];
+                if (src === "weidian" && _id) return ["weidian", this.canonical_weidian_url(_id), _id];
+                if (src === "1688" && _id) return ["1688", this.canonical_1688_url(_id), _id];
+
+                throw new Error("Unsupported link format");
+            },
+
+            build_all_agents_from_any(url) {
+                const [src, raw, _id] = this.normalize_input(url);
+                if (src === "taobao") return this.taobao_links(raw);
+                if (src === "weidian") return this.weidian_links(raw);
+                if (src === "1688") return this.a1688_links(raw);
+                throw new Error("Unreachable state");
+            }
+        };
+
+        function convertLink() {
+            const input = document.getElementById('linkInput');
+            const outputArea = document.getElementById('outputArea');
+            const resultsList = document.getElementById('resultsList');
+            const errorDisplay = document.getElementById('converterError');
+            
+            resultsList.innerHTML = ''; // Clear previous results
+            errorDisplay.textContent = ''; // Clear previous errors
+            outputArea.classList.add('hidden');
+
+            const originalUrl = input.value.trim();
+
+            if (originalUrl === '') {
+                const inputContainer = input.parentElement;
+                inputContainer.classList.add('animate-shake');
+                setTimeout(() => inputContainer.classList.remove('animate-shake'), 500);
+                return;
+            }
+
+            try {
+                const [src, rawUrl, id] = universalLinkConverter.normalize_input(originalUrl);
+                const allLinks = universalLinkConverter.build_all_agents_from_any(originalUrl);
+                
+                // 1. Generate and append RAW link HTML
+                const rawLinkHTML = `
+                    <div>
+                        <p class="font-bold text-gray-800 mb-2">RAW LINK:</p>
+                        <div class="relative flex-grow">
+                            <input type="text" id="raw-link-output" readonly value="${rawUrl}"
+                                class="w-full p-2 pr-16 border border-gray-300 bg-gray-50 rounded-lg text-gray-800 font-mono text-xs shadow-inner focus:outline-none"/>
+                            <button onclick="copyToClipboard('raw-link-output', this)" 
+                                class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gray-600 text-white text-xs font-bold py-1 px-3 rounded-md hover:bg-gray-700 transition">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                `;
+                resultsList.insertAdjacentHTML('beforeend', rawLinkHTML);
+
+                // 2. Generate and append AGENT links header and container
+                const agentContainer = document.createElement('div');
+                agentContainer.className = 'mt-6';
+                agentContainer.innerHTML = `<p class="font-bold text-gray-800 mb-2">AGENT LINKS:</p>`;
+                resultsList.appendChild(agentContainer);
+                
+                // 3. Generate and append all AGENT links
+                Object.entries(allLinks).forEach(([agent, link], index) => {
+                    const inputId = `link-output-${index}`;
+                    const rowHTML = `
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="w-28 flex-shrink-0 font-medium text-gray-700 text-sm text-right">${agent}:</span>
+                            <div class="relative flex-grow">
+                                <input type="text" id="${inputId}" readonly value="${link}"
+                                    class="w-full p-2 pr-16 border border-gray-300 bg-gray-50 rounded-lg text-gray-800 font-mono text-xs shadow-inner focus:outline-none"/>
+                                <button onclick="copyToClipboard('${inputId}', this)" 
+                                    class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gray-600 text-white text-xs font-bold py-1 px-3 rounded-md hover:bg-gray-700 transition">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    agentContainer.insertAdjacentHTML('beforeend', rowHTML);
+                });
+
+                outputArea.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Link conversion error:", error);
+                errorDisplay.textContent = error.message || 'Could not process the link.';
+                const inputContainer = input.parentElement;
+                input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                inputContainer.classList.add('animate-shake');
+                setTimeout(() => {
+                    inputContainer.classList.remove('animate-shake');
+                    input.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                }, 1000);
+            }
+        }
+
+        function copyToClipboard(inputId, buttonElement) {
+            const outputInput = document.getElementById(inputId);
+            
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = outputInput.value;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                buttonElement.textContent = 'Copied!';
+                buttonElement.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                buttonElement.classList.add('bg-accent');
+            } catch (err) {
+                buttonElement.textContent = 'Failed!';
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            
+            document.body.removeChild(tempTextArea);
+
+            setTimeout(() => {
+                buttonElement.textContent = 'Copy';
+                buttonElement.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                buttonElement.classList.remove('bg-accent');
+            }, 2000);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            // 1. Initialize Page (Start on Home Screen)
+            navigate('home');
+            
+            // 2. Setup Auto Scroll for the Product Feed
+            setupAutoScroll();
+            
+            // 3. Setup the Intersection Observer for the stat counter
+            setupStatCounterObserver();
+            
+            // Re-run setupAutoScroll if the window is resized to recalculate view height
+            window.addEventListener('resize', setupAutoScroll);
+        };
+    </script>
 </body>
 </html>
