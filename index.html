@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reps Central Console</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use Inter font and define custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#111827', 
+                        'primary-light': '#FFFFFF',
+                        'accent': '#00AEEF',
+                        'subtle': '#E5E7EB',
+                        'background-light': '#F8F8F8',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: var(--background-light, #F8F8F8);
+            color: #4B5563; 
+        }
+        .text-primary-dark {
+            color: #111827 !important; 
+        }
+        .card, .tiled-product-card {
+            background-color: white !important; 
+            border-color: #E5E7EB !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06) !important;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px); 
+        }
+        .border-subtle { border-color: #E5E7EB; }
+        .header-gradient {
+            background: linear-gradient(135deg, #ffffff 60%, #e0f7fa 100%);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-size: 200% 100%;
+            transition: background 0.5s ease;
+            animation: subtle-shift-pill 4s linear infinite alternate;
+        }
+        @keyframes subtle-shift-pill {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .status-available { background-image: linear-gradient(90deg, #10B981, #00AEEF); color: white; }
+        .home-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .home-nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .auto-scroll-viewport {
+            height: 500px; 
+            overflow: hidden;
+            position: relative;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+            padding: 1rem 0; 
+        }
+        .scrolling-content-wrapper {
+            animation: autoScroll var(--scroll-duration, 15s) linear infinite;
+        }
+        @keyframes autoScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(var(--scroll-distance, -1000px)); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 font-sans min-h-screen p-4 sm:p-8">
+    <!-- Sidebar (Off-Canvas Menu) -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 p-6 shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 bg-white border-r border-subtle">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl font-bold text-accent">Navigation</h3>
+            <button onclick="toggleSidebar()" class="p-1 rounded-full text-gray-600 hover:bg-gray-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <nav class="flex flex-col space-y-3">
+            <button onclick="navigate('data')" class="text-left py-2 px-3 rounded-lg font-medium hover:bg-gray-100 flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10h2m2-10h2m0 0h2"></path></svg>
+                Go to Spreadsheet
+            </button>
+            <button onclick="navigate('link-converter')" class="text-left py-2 px-3 rounded-lg font-medium hover:bg-gray-100 flex items-center">
+                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-2.5m0 5h2m0-5h2"></path></svg>
+                Link Converter
+            </button>
+        </nav>
+    </div>
+
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 hidden transition-opacity duration-300 opacity-0"></div>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <header class="header-gradient flex justify-between items-center mb-6 pb-4 rounded-b-xl shadow-md px-4 sm:px-8 pt-4">
+            <div class="flex items-center space-x-3">
+                <svg onclick="toggleSidebar()" class="w-8 h-8 text-accent cursor-pointer" f
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="statsSection" class="mt-16 py-12 border-t border-b border-subtle">
+                <div class="flex flex-col sm:flex-row justify-around items-center text-center space-y-8 sm:space-y-0">
+                    <div>
+                        <span id="productCount" class="text-6xl font-extrabold text-accent">0</span>
+                        <p class="text-lg font-medium text-gray-700 mt-2">different products</p>
+                    </div>
+                    <div>
+                        <span id="userCount" class="text-6xl font-extrabold text-accent">0</span>
+                        <p class="text-lg font-medium text-gray-700 mt-2">daily users</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA PAGE (Spreadsheet) -->
+        <div id="data-view" class="hidden py-10">
+            <h2 class="text-3xl font-bold text-primary-dark mb-6">Product Spreadsheet</h2>
+
+            <!-- Search + Filters -->
+            <div class="mb-10 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+
+                <div class="relative flex-grow">
+                    <input id="searchInput" type="text" placeholder="Search by item name or category..."
+                        class="w-full p-3 pl-10 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white text-primary-dark"/>
+                </div>
+
+                <div class="relative w-full sm:w-48 z-10" id="customFilterDropdown">
+                    <button id="filterDisplay" onclick="toggleCustomDropdown()"
+                        class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
+                        <span id="filterLabel">Filter: All Categories</span>
+                        <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+
+                    <div id="filterOptions"
+                        class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
+                        <ul class="py-1">
+                            <li onclick="selectOption('all','Filter: All Categories')" class="cursor-pointer p-3 hover:bg-subtle">Filter: All Categories</li>
+                            <li onclick="selectOption('shoes','Shoes')" class="cursor-pointer p-3 hover:bg-subtle">Shoes</li>
+                            <li onclick="selectOption('clothing','Clothing')" class="cursor-pointer p-3 hover:bg-subtle">Clothing</li>
+                            <li onclick="selectOption('accessories','Accessories')" class="cursor-pointer p-3 hover:bg-subtle">Accessories</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infinite Scroll Product Grid -->
+            <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
+
+            <footer class="mt-12 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
+                Displaying items...
+            </footer>
+        </div>
+
+        <!-- LINK CONVERTER PAGE -->
+        <div id="link-converter-view" class="hidden py-10">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-primary-dark mb-4 text-center">Link Converter</h2>
+                <p class="text-center text-gray-600 mb-8">
+                    Convert links to any agent format instantly.
+                </p>
+                <!-- Existing converter stays untouched -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript + Navigation + Scroll Logic stays unchanged -->
+
+    <!-- 👇 New Scripts to load products + infinite scroll rendering -->
+    <script src="products.js"></script>
+    <script src="data-view-render.js"></script>
+
+</body>
+</html>
