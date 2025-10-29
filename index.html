@@ -1,205 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reps Central Console</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configure Tailwind to use Inter font and define custom colors -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-dark': '#111827', 
-                        'primary-light': '#FFFFFF',
-                        'accent': '#00AEEF',
-                        'subtle': '#E5E7EB',
-                        'background-light': '#F8F8F8',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background-color: var(--background-light, #F8F8F8);
-            color: #4B5563; 
-        }
-        .text-primary-dark {
-            color: #111827 !important; 
-        }
-        .card, .tiled-product-card {
-            background-color: white !important; 
-            border-color: #E5E7EB !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06) !important;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-4px); 
-        }
-        .border-subtle { border-color: #E5E7EB; }
-        .header-gradient {
-            background: linear-gradient(135deg, #ffffff 60%, #e0f7fa 100%);
-        }
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.65rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 9999px;
-            background-size: 200% 100%;
-            transition: background 0.5s ease;
-            animation: subtle-shift-pill 4s linear infinite alternate;
-        }
-        @keyframes subtle-shift-pill {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-        .status-available { background-image: linear-gradient(90deg, #10B981, #00AEEF); color: white; }
-        .home-nav-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .home-nav-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-        .auto-scroll-viewport {
-            height: 500px; 
-            overflow: hidden;
-            position: relative;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-            padding: 1rem 0; 
-        }
-        .scrolling-content-wrapper {
-            animation: autoScroll var(--scroll-duration, 15s) linear infinite;
-        }
-        @keyframes autoScroll {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(var(--scroll-distance, -1000px)); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Reps Central</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: "#00AEEF",          /* Gemini blue */
+            subtle: "#E5E7EB",
+            primarydark: "#111827",
+          },
+          fontFamily: { sans: ["Inter", "sans-serif"] },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body { background: #f8f8f8; }
+
+    /* Ticker visuals */
+    .ticker-viewport {
+      height: 460px;                    /* fits two product cards vertically */
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+    .ticker-track {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ticker-step {
+      transition: transform var(--ticker-duration, 6s) linear, opacity 0.6s ease;
+    }
+    .ticker-move {
+      transform: translateY(-50%);      /* move one card height (half the stack) */
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .status-pill {
+      display: inline-flex; align-items:center;
+      padding: 3px 10px; border-radius: 9999px;
+      font-size: 12px; font-weight: 700; color: white;
+      background-image: linear-gradient(90deg, #10B981, #00AEEF);
+    }
+
+    /* Simple home header gradient */
+    .header-gradient {
+      background: linear-gradient(135deg, #ffffff 60%, #e0f7fa 100%);
+    }
+  </style>
 </head>
-<body class="text-gray-800 font-sans min-h-screen p-4 sm:p-8">
-    <!-- Sidebar (Off-Canvas Menu) -->
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 p-6 shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 bg-white border-r border-subtle">
-        <div class="flex justify-between items-center mb-8">
-            <h3 class="text-xl font-bold text-accent">Navigation</h3>
-            <button onclick="toggleSidebar()" class="p-1 rounded-full text-gray-600 hover:bg-gray-100">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
 
-        <nav class="flex flex-col space-y-3">
-            <button onclick="navigate('data')" class="text-left py-2 px-3 rounded-lg font-medium hover:bg-gray-100 flex items-center">
-                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10h2m2-10h2m0 0h2"></path></svg>
-                Go to Spreadsheet
-            </button>
-            <button onclick="navigate('link-converter')" class="text-left py-2 px-3 rounded-lg font-medium hover:bg-gray-100 flex items-center">
-                <svg class="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-2.5m0 5h2m0-5h2"></path></svg>
-                Link Converter
-            </button>
-        </nav>
+<body class="font-sans text-gray-800">
+  <!-- Top bar -->
+  <header class="header-gradient border-b border-subtle">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-primarydark">Reps Central</h1>
+      <nav class="flex items-center gap-3">
+        <button
+          class="px-4 py-2 rounded-lg bg-accent text-white font-semibold"
+          onclick="navigate('data')">
+          View All Products
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HOME VIEW (Gemini-style auto scroll) -->
+  <main id="home-view" class="max-w-7xl mx-auto px-5 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-5">
+        <h2 class="text-xl md:text-2xl font-bold text-primarydark mb-3">
+          New & Noteworthy
+        </h2>
+        <p class="text-gray-600 mb-6">
+          A rotating spotlight of the latest drops. Click any item to open the buy link in a new tab.
+        </p>
+        <button
+          class="home-nav-btn bg-accent text-white"
+          onclick="navigate('data')">
+          View All Products
+        </button>
+      </div>
+
+      <!-- Ticker -->
+      <div class="lg:col-span-7">
+        <div class="ticker-viewport rounded-xl border border-subtle bg-white p-4">
+          <div id="tickerTrack" class="ticker-track"></div>
+        </div>
+      </div>
     </div>
 
-    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 hidden transition-opacity duration-300 opacity-0"></div>
-
-    <!-- Main Container -->
-    <div class="max-w-7xl mx-auto">
-
-        <!-- Header -->
-        <header class="header-gradient flex justify-between items-center mb-6 pb-4 rounded-b-xl shadow-md px-4 sm:px-8 pt-4">
-            <div class="flex items-center space-x-3">
-                <svg onclick="toggleSidebar()" class="w-8 h-8 text-accent cursor-pointer" f
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="statsSection" class="mt-16 py-12 border-t border-b border-subtle">
-                <div class="flex flex-col sm:flex-row justify-around items-center text-center space-y-8 sm:space-y-0">
-                    <div>
-                        <span id="productCount" class="text-6xl font-extrabold text-accent">0</span>
-                        <p class="text-lg font-medium text-gray-700 mt-2">different products</p>
-                    </div>
-                    <div>
-                        <span id="userCount" class="text-6xl font-extrabold text-accent">0</span>
-                        <p class="text-lg font-medium text-gray-700 mt-2">daily users</p>
-                    </div>
-                </div>
-            </div>
+    <!-- Stats row (optional, kept minimal) -->
+    <section class="mt-12 py-8 border-t border-b border-subtle bg-white rounded-xl">
+      <div class="max-w-4xl mx-auto grid grid-cols-2 text-center">
+        <div>
+          <span id="productCount" class="text-4xl md:text-5xl font-extrabold text-accent">0</span>
+          <p class="text-gray-700 mt-1">different products</p>
         </div>
-
-        <!-- DATA PAGE (Spreadsheet) -->
-        <div id="data-view" class="hidden py-10">
-            <h2 class="text-3xl font-bold text-primary-dark mb-6">Product Spreadsheet</h2>
-
-            <!-- Search + Filters -->
-            <div class="mb-10 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-
-                <div class="relative flex-grow">
-                    <input id="searchInput" type="text" placeholder="Search by item name or category..."
-                        class="w-full p-3 pl-10 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white text-primary-dark"/>
-                </div>
-
-                <div class="relative w-full sm:w-48 z-10" id="customFilterDropdown">
-                    <button id="filterDisplay" onclick="toggleCustomDropdown()"
-                        class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
-                        <span id="filterLabel">Filter: All Categories</span>
-                        <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-
-                    <div id="filterOptions"
-                        class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
-                        <ul class="py-1">
-                            <li onclick="selectOption('all','Filter: All Categories')" class="cursor-pointer p-3 hover:bg-subtle">Filter: All Categories</li>
-                            <li onclick="selectOption('shoes','Shoes')" class="cursor-pointer p-3 hover:bg-subtle">Shoes</li>
-                            <li onclick="selectOption('clothing','Clothing')" class="cursor-pointer p-3 hover:bg-subtle">Clothing</li>
-                            <li onclick="selectOption('accessories','Accessories')" class="cursor-pointer p-3 hover:bg-subtle">Accessories</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Infinite Scroll Product Grid -->
-            <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
-
-            <footer class="mt-12 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
-                Displaying items...
-            </footer>
+        <div>
+          <span id="userCount" class="text-4xl md:text-5xl font-extrabold text-accent">0</span>
+          <p class="text-gray-700 mt-1">daily users</p>
         </div>
+      </div>
+    </section>
+  </main>
 
-        <!-- LINK CONVERTER PAGE -->
-        <div id="link-converter-view" class="hidden py-10">
-            <div class="max-w-2xl mx-auto">
-                <h2 class="text-3xl font-bold text-primary-dark mb-4 text-center">Link Converter</h2>
-                <p class="text-center text-gray-600 mb-8">
-                    Convert links to any agent format instantly.
-                </p>
-                <!-- Existing converter stays untouched -->
-            </div>
-        </div>
+  <!-- DATA (Spreadsheet) VIEW -->
+  <section id="data-view" class="hidden max-w-7xl mx-auto px-5 py-10">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold text-primarydark">Product Spreadsheet</h2>
+      <button class="px-4 py-2 rounded-lg border border-subtle font-semibold"
+              onclick="navigate('home')">
+        Back to Home
+      </button>
     </div>
 
-    <!-- JavaScript + Navigation + Scroll Logic stays unchanged -->
+    <!-- Filters (UI only for now, keep as-is) -->
+    <div class="mb-8 flex flex-col sm:flex-row gap-4">
+      <div class="relative flex-grow">
+        <input id="searchInput" type="text"
+               placeholder="Search by item name or category..."
+               class="w-full p-3 pl-3 border border-subtle rounded-xl focus:ring-2 focus:ring-accent bg-white"/>
+      </div>
 
-    <!-- 👇 New Scripts to load products + infinite scroll rendering -->
-    <script src="data-view-render.js"></script>
+      <div class="relative w-full sm:w-56" id="customFilterDropdown">
+        <button id="filterDisplay" onclick="toggleCustomDropdown()"
+                class="w-full p-3 pr-10 border border-subtle rounded-xl bg-white flex justify-between items-center">
+          <span id="filterLabel">Filter: All Categories</span>
+          <svg id="dropdownArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
 
+        <div id="filterOptions"
+             class="absolute w-full bg-white border border-subtle rounded-xl shadow-xl max-h-0 overflow-hidden transition-all ease-in-out">
+          <ul class="py-1">
+            <li onclick="selectOption('all','Filter: All Categories')" class="cursor-pointer p-3 hover:bg-gray-50">Filter: All Categories</li>
+            <li onclick="selectOption('shoes','Shoes')" class="cursor-pointer p-3 hover:bg-gray-50">Shoes</li>
+            <li onclick="selectOption('clothing','Clothing')" class="cursor-pointer p-3 hover:bg-gray-50">Clothing</li>
+            <li onclick="selectOption('accessories','Accessories')" class="cursor-pointer p-3 hover:bg-gray-50">Accessories</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infinite Scroll Product Grid -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
+
+    <footer class="mt-10 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
+      Displaying items...
+    </footer>
+  </section>
+
+  <!-- ====== NAV + DROPDOWN HELPERS ====== -->
+  <script>
+    function show(el) { el.classList.remove('hidden'); }
+    function hide(el) { el.classList.add('hidden'); }
+
+    window.navigate = function(page) {
+      const home = document.getElementById('home-view');
+      const data = document.getElementById('data-view');
+      if (page === 'data') { hide(home); show(data); }
+      else { show(home); hide(data); }
+    };
+
+    window.toggleCustomDropdown = function() {
+      const options = document.getElementById("filterOptions");
+      const arrow = document.getElementById("dropdownArrow");
+      const open = options.classList.contains("max-h-60");
+      options.classList.toggle("max-h-60", !open);
+      options.classList.toggle("max-h-0", open);
+      arrow && arrow.classList.toggle("rotate-180", !open);
+    };
+
+    window.selectOption = function(value, label) {
+      const lbl = document.getElementById("filterLabel");
+      const btn = document.getElementById("filterDisplay");
+      lbl.textContent = label;
+      btn.dataset.value = value;
+    };
+  </script>
+
+  <!-- ====== HOMEPAGE TICKER (first 20 from CSV) ====== -->
+  <script>
+    (function() {
+      const DURATION_MS = 6000;                // same-feel speed
+      const MAX_ITEMS = 20;
+      const track = document.getElementById('tickerTrack');
+      let products = [];
+      let ptr = 0;                             // pointer to "current top" index
+      let animTimer = null;
+
+      function formatPrice(raw) {
+        if (raw == null) return "$0.00";
+        let s = String(raw).replace(/\$/g, "").replace(/,/g, "").trim();
+        const n = Number(s);
+        if (!isFinite(n)) return `$${s}`;
+        return `$${n.toFixed(2)}`;
+      }
+
+      function updateRef(url) {
+        try {
+          const u = new URL(url);
+          u.searchParams.set("ref", "100201678");
+          return u.toString();
+        } catch { return url; }
+      }
+
+      function productCard(p) {
+        const div = document.createElement('a');
+        div.href = p.link || '#';
+        div.target = p.link ? '_blank' : '';
+        div.rel = 'noopener';
+        div.className = 'card block';
+        div.innerHTML = `
+          <div class="w-full h-56 bg-gray-100 overflow-hidden">
+            <img alt="${p.name}" src="${p.image}"
+                 class="w-full h-full object-cover"
+                 onerror="this.onerror=null;this.src='https://placehold.co/800x400/E5E7EB/6B7280?text=IMG';" />
+          </div>
+          <div class="p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold text-lg text-primarydark truncate pr-2">${p.name}</h3>
+              <span class="status-pill">Available</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="font-bold text-green-600 text-xl">${p.price}</span>
+              <span class="text-gray-500">Category: ${p.category.charAt(0).toUpperCase()+p.category.slice(1)}</span>
+            </div>
+          </div>
+        `;
+        return div;
+      }
+
+      function renderPair(topIndex) {
+        track.innerHTML = '';
+        const a = products[topIndex % products.length];
+        const b = products[(topIndex + 1) % products.length];
+
+        const step = document.createElement('div');
+        step.className = 'ticker-step';
+        step.style.setProperty('--ticker-duration', DURATION_MS + 'ms');
+
+        // container with two stacked cards
+        const stack = document.createElement('div');
+        stack.className = 'grid grid-cols-1 gap-4';
+        stack.appendChild(productCard(a));
+        stack.appendChild(productCard(b));
+        step.appendChild(stack);
+        track.appendChild(step);
+
+        // trigger the move on next frame
+        requestAnimationFrame(() => {
+          step.classList.add('ticker-move');
+        });
+
+        // after movement completes, advance pointer and render next
+        clearTimeout(animTimer);
+        animTimer = setTimeout(() => {
+          ptr = (ptr + 1) % products.length;
+          renderPair(ptr);
+        }, DURATION_MS);
+      }
+
+      async function loadFirst20() {
+        const res = await fetch('gemini_products.csv', { cache: 'no-store' });
+        if (!res.ok) throw new Error('CSV not found. Put gemini_products.csv in the repo root.');
+        const txt = await res.text();
+        const lines = txt.split(/\r?\n/).filter(Boolean);
+
+        // Heuristic: if first line doesn't start with '[', treat as header and skip 1
+        let i = /^\s*\[/.test(lines[0]) ? 0 : 1;
+
+        for (; i < lines.length && products.length < MAX_ITEMS; i++) {
+          const parts = lines[i].split('\t');     // TSV
+          if (parts.length < 3) continue;
+          const col1 = (parts[0] || '').trim();   // [name](link){price}%category%
+          const image = (parts[2] || '').trim();  // image url
+
+          const name = (col1.match(/\[([^\]]+)\]/) || [,''])[1].trim();
+          let link = (col1.match(/\(([^)]+)\)/) || [,''])[1].trim();
+          const priceRaw = (col1.match(/\{([^}]+)\}/) || [,''])[1].trim();
+          const category = (col1.match(/%([^%]+)%/) || [,''])[1].trim().toLowerCase();
+
+          if (!name) continue;
+          if (link) link = updateRef(link);
+
+          products.push({
+            id: products.length + 1,
+            name, link,
+            price: formatPrice(priceRaw),
+            category, image
+          });
+        }
+
+        // Update stat counter (nice touch)
+        const productCount = document.getElementById('productCount');
+        if (productCount) productCount.textContent = String(lines.length - (i > 0 ? 1 : 0));
+      }
+
+      window.addEventListener('load', async () => {
+        try {
+          await loadFirst20();
+          if (products.length >= 2) {
+            renderPair(ptr);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Spreadsheet renderer (loads full CSV & infinite scroll) -->
+  <script src="data-view-render.js"></script>
 </body>
 </html>
