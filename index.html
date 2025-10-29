@@ -12,76 +12,79 @@
       theme: {
         extend: {
           colors: {
-            accent: "#00AEEF",             /* Gemini blue */
+            accent: "#00AEEF",
             subtle: "#E5E7EB",
-            primarydark: "#111827",
-            linkdead: "#EF4444",
-            lowstock: "#F59E0B",
+            primarydark: "#111827"
           },
-          fontFamily: { sans: ["Inter","system-ui","sans-serif"] },
-          boxShadow: {
-            card: "0 10px 18px rgba(0,0,0,.06)"
-          }
+          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+          boxShadow: { card: "0 10px 18px rgba(0,0,0,.06)" }
         }
       }
     }
   </script>
 
   <style>
-    body{ background:#F7F7F7; }
-    .header-gradient{
-      background: linear-gradient(135deg,#ffffff 60%, #e7fbff 100%);
+    body {
+      background-color: #F8F8F8;
+      color: #4B5563;
     }
-    /* Gemini left buttons look (thick, rounded, drop) */
-    .gem-btn{
-      display:flex;align-items:center;justify-content:center;
-      padding:14px 18px;border-radius:14px;
-      background:#00AEEF;color:#fff;font-weight:800;
-      box-shadow: 0 20px 35px rgba(0,174,239,.25);
+
+    .header-gradient {
+      background: linear-gradient(135deg, #ffffff 60%, #e7fbff 100%);
+    }
+
+    /* --- LEFT PANEL: Gemini-identical sizing/spacing --- */
+    .left-panel { max-width: 420px; margin-left: 28px; }
+    .logo-box {
+      height: 180px; border-radius: 12px; background:#00AEEF; color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 800; letter-spacing:.5px; box-shadow: 0 10px 20px rgba(0,0,0,.06);
+    }
+    .gem-btn {
+      display:flex; align-items:center; justify-content:center;
+      height: 56px; width: 100%;
+      border-radius: 12px; font-weight: 800; color:#fff; background:#00AEEF;
+      box-shadow:
+        0 24px 36px rgba(0,174,239,.25),
+        inset 0 1px 0 rgba(255,255,255,.35);
       transition: transform .08s ease, box-shadow .12s ease;
     }
-    .gem-btn:hover{ transform: translateY(-1px); box-shadow: 0 26px 46px rgba(0,174,239,.28); }
-    .gem-btn:active{ transform: translateY(0); }
-
-    /* Featured grid mask + continuous scroll track (Gemini feel) */
-    .mask-edges{
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%);
-              mask-image: linear-gradient(to bottom, transparent 0%, black 9%, black 91%, transparent 100%);
+    .gem-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 28px 48px rgba(0,174,239,.28), inset 0 1px 0 rgba(255,255,255,.35);
     }
-    .feed-viewport{ height: 560px; overflow:hidden; position:relative; }
-    .feed-track{ position:absolute; inset:0; will-change: transform; }
-    .feed-fade{ transition: opacity .45s ease; }
+    .gem-btn:active { transform: translateY(0); }
 
-    .card{ background:#fff; border:1px solid #E5E7EB; border-radius:16px; box-shadow: var(--tw-shadow),var(--tw-shadow-colored), 0 8px 20px rgba(0,0,0,.05); }
-    .band{ height:72px; border-radius:12px; }
-    .band.blue{ background:#2EA8FF; }
-    .band.yellow{ background:#FDBA21; }
-    .band.green{ background:#1DBE8A; }
-    .band.red{ background:#F19999; }
-
-    .status-pill{
-      display:inline-flex;align-items:center;padding:4px 10px;border-radius:9999px;
-      font-size:12px;font-weight:700;color:#fff;background-image:linear-gradient(90deg,#10B981,#00AEEF);
+    .tools-card {
+      margin-top: 22px; background:#fff; border:1px solid #E5E7EB;
+      border-radius: 14px; padding: 18px 20px; box-shadow: 0 8px 20px rgba(0,0,0,.06);
     }
-    .buy-bar{
-      display:flex;align-items:center;justify-content:center;
-      height:34px;border-radius:10px;background:#E5E7EB;color:#6B7280;font-weight:600;font-size:13px;
-    }
+    .tool-link { color:#00AEEF; cursor:pointer; }
+    .tool-row { display:flex; align-items:center; gap:8px; }
 
-    /* simple helpers */
-    .hidden-el{ display:none; }
+    /* right section placeholder styling (we'll refine next) */
+    .feed-placeholder {
+      background: white;
+      height: 560px;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
   </style>
 </head>
+
 <body class="font-sans text-gray-800">
 
   <!-- TOP BAR -->
   <header class="header-gradient border-b border-subtle">
     <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
         <h1 class="text-2xl md:text-3xl font-extrabold text-primarydark">Reps Central</h1>
       </div>
-      <button class="gem-btn text-sm md:text-base" onclick="navigate('data')">View All Products</button>
+      <button class="gem-btn text-sm md:text-base w-auto px-5" onclick="navigate('data')">View All Products</button>
     </div>
   </header>
 
@@ -89,41 +92,40 @@
   <div id="home-view" class="max-w-7xl mx-auto px-5 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-      <!-- LEFT PANEL (matches Gemini) -->
+      <!-- LEFT PANEL (Gemini identical) -->
       <aside class="lg:col-span-5">
-        <div class="w-full bg-accent text-white rounded-xl h-48 flex items-center justify-center font-extrabold text-center tracking-wide shadow-card">
-          REPS CENTRAL LOGO
-        </div>
+        <div class="left-panel">
+          <div class="logo-box">REPS CENTRAL LOGO</div>
 
-        <div class="mt-8 flex flex-col gap-5">
-          <button class="gem-btn w-full" onclick="navigate('data')">PRODUCTS (Spreadsheet)</button>
-          <a class="gem-btn w-full" href="https://www.reddit.com/r/StreetwearRep" target="_blank" rel="noopener">JOIN THE REDDIT</a>
-        </div>
+          <div class="mt-6 flex flex-col gap-5">
+            <button class="gem-btn" onclick="navigate('data')">PRODUCTS (Spreadsheet)</button>
+            <a class="gem-btn" href="https://www.reddit.com/r/StreetwearRep" target="_blank" rel="noopener">JOIN THE REDDIT</a>
+          </div>
 
-        <div class="mt-10 rounded-2xl bg-white border border-subtle p-5 shadow-card">
-          <p class="font-semibold mb-3 text-gray-700">Other Tools:</p>
-          <ul class="space-y-3 text-sm">
-            <li class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/></svg>
-              <span class="text-accent cursor-pointer" onclick="navigate('link-converter')">Link Converter</span>
-            </li>
-            <li class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zM19 21a7 7 0 10-14 0"/></svg>
-              <span class="text-accent cursor-pointer">Trusted Sellers</span>
-            </li>
-          </ul>
+          <div class="tools-card">
+            <p class="font-semibold mb-3 text-gray-700">Other Tools:</p>
+            <div class="space-y-3 text-sm">
+              <div class="tool-row">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
+                </svg>
+                <span class="tool-link" onclick="navigate('link-converter')">Link Converter</span>
+              </div>
+              <div class="tool-row">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zM19 21a7 7 0 10-14 0"/>
+                </svg>
+                <span class="tool-link">Trusted Sellers</span>
+              </div>
+            </div>
+          </div>
         </div>
       </aside>
 
-      <!-- RIGHT FEATURED GRID (Gemini style) -->
+      <!-- RIGHT PANEL placeholder -->
       <section class="lg:col-span-7">
         <h2 class="text-xl md:text-2xl font-bold text-primarydark text-center mb-4">Featured New Drops</h2>
-
-        <div class="feed-viewport mask-edges rounded-2xl border border-subtle bg-white shadow-card p-4">
-          <div id="feedTrack" class="feed-track">
-            <!-- cards will be injected here -->
-          </div>
-        </div>
+        <div class="feed-placeholder"></div>
       </section>
     </div>
 
@@ -142,7 +144,7 @@
     </div>
   </div>
 
-  <!-- FULL SPREADSHEET VIEW (same page; toggled) -->
+  <!-- FULL SPREADSHEET VIEW (hidden for now) -->
   <section id="data-view" class="hidden max-w-7xl mx-auto px-5 py-10">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl md:text-3xl font-bold text-primarydark">Product Spreadsheet</h2>
@@ -182,7 +184,7 @@
     </footer>
   </section>
 
-  <!-- NAV + DROPDOWN -->
+  <!-- NAV LOGIC -->
   <script>
     function show(el){ el.classList.remove('hidden'); }
     function hide(el){ el.classList.add('hidden'); }
@@ -205,130 +207,5 @@
       document.getElementById("filterDisplay").dataset.value = value;
     };
   </script>
-
-  <!-- HOMEPAGE FEED (first 20 from TSV; continuous upward scroll; two columns) -->
-  <script>
-    (function(){
-      const MAX_ITEMS = 20;
-      const TRACK = document.getElementById('feedTrack');
-
-      const COLORMAP = (cat)=>{
-        const c = (cat||'').toLowerCase();
-        if(c.includes('shoe') || c.includes('sneaker')) return 'blue';
-        if(c.includes('cloth') || c.includes('tee') || c.includes('hoodie') || c.includes('jacket')) return 'yellow';
-        if(c.includes('access')) return 'red';
-        return 'green';
-      };
-
-      const fmtPrice = (raw)=>{
-        let s = String(raw||'').replace(/\$/g,'').replace(/,/g,'').trim();
-        const n = Number(s);
-        return isFinite(n) ? `$${n.toFixed(2)}` : `$${s}`;
-      };
-
-      const withRef = (url)=>{
-        try{ const u=new URL(url); u.searchParams.set('ref','100201678'); return u.toString(); }
-        catch{ return url; }
-      };
-
-      function card(p){
-        const el = document.createElement('div');
-        el.className = 'card p-4';
-        const bandColor = COLORMAP(p.category);
-        el.innerHTML = `
-          <div class="band ${bandColor} mb-3 rounded-xl"></div>
-          <div class="flex items-start justify-between mb-2">
-            <h3 class="font-semibold text-base md:text-lg text-primarydark pr-2 truncate">${p.name}</h3>
-            <span class="status-pill">Available</span>
-          </div>
-          <div class="flex items-center justify-between text-sm mb-3">
-            <span class="font-bold text-green-600 text-lg">${p.price}</span>
-            <span class="text-gray-500">Category: ${p.category?.[0]?.toUpperCase()}${p.category?.slice(1) || ''}</span>
-          </div>
-          <div class="w-full h-40 rounded-lg overflow-hidden bg-gray-100 mb-3">
-            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover"
-                 onerror="this.onerror=null;this.src='https://placehold.co/640x320/E5E7EB/6B7280?text=IMG';"/>
-          </div>
-          <a ${p.link ? `href="${p.link}" target="_blank" rel="noopener"` : ''} class="buy-bar">${p.link ? 'BUY ON MULEBUY' : '(Link Dead)'}</a>
-        `;
-        return el;
-      }
-
-      function buildGrid(products){
-        // Build two columns that scroll upward together
-        const wrap = document.createElement('div');
-        wrap.className = 'grid grid-cols-1 md:grid-cols-2 gap-5 feed-fade';
-
-        const left = document.createElement('div');
-        const right = document.createElement('div');
-
-        products.forEach((p,i)=> (i%2===0 ? left : right).appendChild(card(p)) );
-
-        wrap.appendChild(left); wrap.appendChild(right);
-        return wrap;
-      }
-
-      function startLoop(products){
-        // Duplicate content to allow seamless loop
-        TRACK.innerHTML = '';
-        const a = buildGrid(products);
-        const b = buildGrid(products);
-        TRACK.appendChild(a);
-        TRACK.appendChild(b);
-
-        let y = 0;
-        const step = 0.6; // px per frame ~ matches Gemini’s smooth pace
-        function tick(){
-          y -= step;
-          TRACK.style.transform = `translateY(${y}px)`;
-          const full = a.getBoundingClientRect().height + 20; // +gap
-          if(Math.abs(y) >= full){ y = 0; TRACK.style.transform = 'translateY(0)'; }
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-
-      async function load20(){
-        const res = await fetch('gemini_products.csv', { cache: 'no-store' });
-        if(!res.ok) throw new Error('gemini_products.csv not found in repo root');
-        const txt = await res.text();
-        const lines = txt.split(/\r?\n/).filter(Boolean);
-        let i = /^\s*\[/.test(lines[0]) ? 0 : 1;
-
-        const out = [];
-        for(; i<lines.length && out.length<MAX_ITEMS; i++){
-          const parts = lines[i].split('\t');
-          if(parts.length < 3) continue;
-          const col1 = (parts[0]||'').trim();  // [name](link){price}%category%
-          const image = (parts[2]||'').trim();
-
-          const name = (col1.match(/\[([^\]]+)\]/) || [,''])[1].trim();
-          let link  = (col1.match(/\(([^)]+)\)/) || [,''])[1].trim();
-          const price = fmtPrice((col1.match(/\{([^}]+)\}/) || [,''])[1].trim());
-          const category = (col1.match(/%([^%]+)%/) || [,''])[1].trim().toLowerCase();
-
-          if(!name) continue;
-          if(link) link = withRef(link);
-
-          out.push({ name, link, price, category, image });
-        }
-        const productCount = document.getElementById('productCount');
-        if(productCount) productCount.textContent = String(lines.length - (i>0 ? 1 : 0));
-        return out;
-      }
-
-      window.addEventListener('load', async ()=>{
-        try{
-          const products = await load20();
-          if(products.length){
-            startLoop(products);
-          }
-        }catch(e){ console.error(e); }
-      });
-    })();
-  </script>
-
-  <!-- Spreadsheet renderer (full list view) -->
-  <script src="data-view-render.js"></script>
 </body>
 </html>
