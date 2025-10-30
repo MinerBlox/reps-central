@@ -228,109 +228,14 @@
                     <h2 class="text-2xl font-bold text-primary-dark mb-4 self-start lg:self-center">Featured New Drops</h2>
 
 <!-- CSV-powered vertical feed -->
-<div id="featuredTrack" class="hidden"></div>
+<div id="featuredTrack" class="hidden grid grid-cols-2 gap-4 mt-2"></div>
                     
 <!-- Auto-Scroll Viewport (Height set by JS to fit exactly 2 rows) -->
 <div id="autoScrollViewport" class="auto-scroll-viewport w-full max-w-lg lg:max-w-none">
                         
                         <!-- Scrolling Content Wrapper (Animated by CSS Keyframes) -->
                         <div id="scrollingContent" class="scrolling-content-wrapper">
-                            
-                            <!-- Product Grid (Original content) -->
-                            <div id="productGrid" class="grid grid-cols-2 gap-4">
-                                
-                                <!-- Product Card 1 -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/400x128/00AEEF/ffffff?text=RUNNER+3.0" alt="Sneaker" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Performance Runner 3.0</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-green-600">$125.00</span>
-                                        <span class="status-pill status-available">Available</span>
-                                    </div>
-                                    <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
-                                        BUY ON MULEBUY
-                                    </button>
-                                </div>
-
-                                <!-- Product Card 2 -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/400x128/F59E0B/ffffff?text=CHRONOGRAPH" alt="Watch" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Minimalist Chrono</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-yellow-600">$299.00</span>
-                                        <span class="status-pill status-low-stock">Low Stock</span>
-                                    </div>
-                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
-                                        BUY ON MULEBUY
-                                    </button>
-                                </div>
-                                
-                                <!-- Product Card 3 -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/400x128/3B82F6/ffffff?text=BACKPACK" alt="Backpack" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Commuter Backpack Pro</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-green-600">$85.00</span>
-                                        <span class="status-pill status-available">Available</span>
-                                    </div>
-                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
-                                        BUY ON MULEBUY
-                                    </button>
-                                </div>
-
-                                 <!-- Product Card 4 (Dead Link) -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3 opacity-90">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden opacity-60">
-                                        <img src="https://placehold.co/400x128/EF4444/ffffff?text=LINK+DEAD" alt="Jacket" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Waterproof Tech Shell V2</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-red-600">N/A</span>
-                                        <span class="status-pill status-dead">Link Dead</span>
-                                    </div>
-                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition" disabled>
-                                        (Link Dead)
-                                    </button>
-                                </div>
-                                
-                                <!-- Product Card 5 (Checking) -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/400x128/FBBF24/ffffff?text=GLASSES" alt="Sunglasses" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Classic Polarized Shades</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-gray-600">$75.00</span>
-                                        <span class="status-pill status-checking">Checking</span>
-                                    </div>
-                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
-                                        BUY ON MULEBUY
-                                    </button>
-                                </div>
-
-                                <!-- Product Card 6 (Added for scroll height) -->
-                                <div class="w-full card tiled-product-card shadow-md border transition transform hover:scale-[1.02] cursor-pointer rounded-xl p-3">
-                                    <div class="w-full h-32 mb-2 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/400x128/10B981/ffffff?text=TRAVEL+DUFFEL" alt="Backpack" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x128/E5E7EB/6B7280?text=IMG';" />
-                                    </div>
-                                    <h3 class="text-base font-semibold mb-1 truncate text-primary-dark">Travel Duffel XL</h3>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="font-bold text-green-600">$199.00</span>
-                                        <span class="status-pill status-available">Available</span>
-                                    </div>
-                                     <button class="mt-2 w-full text-xs py-1.5 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400 transition">
-                                        BUY ON MULEBUY
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Cloned content is appended by JS for the seamless loop -->
+                            <div id="featuredTrack" class="hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -408,80 +313,8 @@
 
             <!-- Data Grid/Listing Area -->
             <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                <!-- Card 1: Available Product (Large Image Design) -->
-                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
-                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
-                        <img src="https://placehold.co/400x192/00AEEF/ffffff?text=PERFORMANCE+RUNNER+3.0" alt="Sneaker" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
-                    </div>
-                    <div class="px-2 pb-2">
-                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Performance Runner 3.0</h3>
-                        <p class="text-sm text-gray-500 mb-3">Category: Footwear | Vendor: Alpha Gear</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-green-600">$125.00</span>
-                            <span class="status-pill status-available">Available</span>
-                        </div>
-                    </div>
-                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
-                        <a href="#" class="text-sm text-accent font-medium hover:underline flex items-center">
-                            View Details
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        </a>
-                        <a href="#" class="text-xs text-gray-400 hover:text-accent transition">
-                            Compare
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Card 2: Link Dead Product (Large Image Design) -->
-                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
-                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden opacity-60">
-                         <img src="https://placehold.co/400x192/EF4444/ffffff?text=LINK+DEAD" alt="Jacket" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
-                    </div>
-                    <div class="px-2 pb-2">
-                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Waterproof Tech Shell V2</h3>
-                        <p class="text-sm text-gray-500 mb-3">Category: Outerwear | Vendor: RainCo</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-red-600">N/A</span>
-                            <span class="status-pill status-dead">Link Dead</span>
-                        </div>
-                    </div>
-                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
-                        <button class="text-sm text-gray-400 font-medium cursor-not-allowed flex items-center" disabled>
-                            View Details
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        </button>
-                        <a href="#" class="text-xs text-gray-400 hover:text-accent transition">
-                            Archive
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Card 3: Low Stock Product (Large Image Design) -->
-                <div class="card bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
-                    <div class="w-full h-48 mb-4 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
-                        <img src="https://placehold.co/400x192/F59E0B/ffffff?text=CHRONOGRAPH" alt="Watch" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/400x192/E5E7EB/6B7280?text=IMG';" />
-                    </div>
-                    <div class="px-2 pb-2">
-                        <h3 class="text-xl font-semibold mb-1 truncate text-primary-dark">Minimalist Chrono</h3>
-                        <p class="text-sm text-gray-500 mb-3">Category: Accessories | Vendor: TimeLink</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-yellow-600">$299.00</span>
-                            <span class="status-pill status-low-stock">Low Stock</span>
-                        </div>
-                    </div>
-                    <div class="border-t border-subtle pt-4 flex justify-between items-center px-2">
-                        <a href="#" class="text-sm text-accent font-medium hover:underline flex items-center">
-                            View Details
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        </a
-                        ><a href="#" class="text-xs text-gray-400 hover:text-accent transition">
-                            Order More
-                        </a>
-                    </div>
-                </div>
             </main>
-
+                <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
             <!-- Footer/Summary -->
             <footer class="mt-12 pt-6 text-center text-sm text-gray-500 border-t border-subtle">
                 Displaying 3 of 124 total items. Sleek data management by Gemini.
