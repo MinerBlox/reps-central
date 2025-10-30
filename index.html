@@ -226,9 +226,12 @@
                 <div class="lg:col-span-7 relative h-full min-h-[70vh] p-4 flex flex-col items-center">
                     
                     <h2 class="text-2xl font-bold text-primary-dark mb-4 self-start lg:self-center">Featured New Drops</h2>
+
+<!-- CSV-powered vertical feed -->
+<div id="featuredTrack" class="hidden"></div>
                     
-                    <!-- Auto-Scroll Viewport (Height set by JS to fit exactly 2 rows) -->
-                    <div id="autoScrollViewport" class="auto-scroll-viewport w-full max-w-lg lg:max-w-none">
+<!-- Auto-Scroll Viewport (Height set by JS to fit exactly 2 rows) -->
+<div id="autoScrollViewport" class="auto-scroll-viewport w-full max-w-lg lg:max-w-none">
                         
                         <!-- Scrolling Content Wrapper (Animated by CSS Keyframes) -->
                         <div id="scrollingContent" class="scrolling-content-wrapper">
@@ -1063,7 +1066,6 @@
 </body>
 </html>
 
-<!-- 👇 CSV + Carousel Logic -->
 <script>
 const CSV_FILE = "gemini_products.csv";
 let allProducts = [];
@@ -1098,15 +1100,24 @@ async function parseCSV() {
 /* ==== HOMEPAGE CAROUSEL ==== */
 function loadCarousel(products) {
   const container = document.querySelector("#featuredTrack");
+  const oldViewport = document.querySelector("#autoScrollViewport");
   if (!container) return;
+
+  // hide old placeholder feed
+  if (oldViewport) oldViewport.style.display = "none";
+
+  // show CSV feed
+  container.classList.remove("hidden");
+  container.classList.add("grid","grid-cols-2","gap-4","mt-2");
+
   container.innerHTML = "";
   const subset = products.slice(0, 20);
   subset.forEach((p) => {
     const card = document.createElement("div");
     card.className =
-      "bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-lg mb-6";
+      "bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-lg mb-2";
     card.innerHTML = `
-      <div class="h-40 bg-gray-100">
+      <div class="h-32 bg-gray-100">
         <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover"
           onerror="this.src='https://placehold.co/400x300?text=No+Image';" />
       </div>
@@ -1120,7 +1131,7 @@ function loadCarousel(products) {
     container.appendChild(card);
   });
 
-  // smooth Gemini-style upward fade scroll
+  // auto-scroll (simple upward loop)
   let y = 0;
   const scrollSpeed = 0.4;
   function tick() {
@@ -1140,7 +1151,7 @@ function loadAllProducts() {
   allProducts.forEach((p) => {
     const card = document.createElement("div");
     card.className =
-      "bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-lg";
+      "bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col";
     card.innerHTML = `
       <div class="w-full h-48 bg-gray-100 overflow-hidden">
         <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover"
@@ -1148,7 +1159,7 @@ function loadAllProducts() {
       </div>
       <div class="p-4 flex-1 flex flex-col justify-between">
         <div>
-          <h3 class="text-lg font-semibold text-gray-900 truncate">${p.name}</h3>
+          <h3 class="text-lg font-semibold text-primary-dark truncate">${p.name}</h3>
           <p class="text-[#00AEEF] font-bold mt-1">${p.price}</p>
           <p class="text-gray-500 text-sm">${p.cat}</p>
         </div>
@@ -1158,7 +1169,6 @@ function loadAllProducts() {
     grid.appendChild(card);
   });
 
-  // search filter
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
@@ -1172,13 +1182,15 @@ function loadAllProducts() {
   }
 }
 
-/* ==== NAVIGATION HANDLER ==== */
+/* ==== NAV HOOK ==== */
 const origNav = window.navigate;
 window.navigate = function (view) {
   if (typeof origNav === "function") origNav(view);
-  if (view === "data-view" && !window.productsLoaded) {
-    window.productsLoaded = true;
-    loadAllProducts();
+  if (view === "data" || view === "data-view") {
+    if (!window.productsLoaded) {
+      window.productsLoaded = true;
+      loadAllProducts();
+    }
   }
 };
 
