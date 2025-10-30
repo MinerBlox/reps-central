@@ -1062,3 +1062,130 @@
     </script>
 </body>
 </html>
+
+<!-- 👇 CSV + Carousel Logic -->
+<script>
+const CSV_FILE = "gemini_products.csv";
+let allProducts = [];
+
+async function parseCSV() {
+  const res = await fetch(CSV_FILE);
+  const text = await res.text();
+  const rows = text.split(/\r?\n/).filter(Boolean);
+  const out = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i].split(",");
+    if (cols.length < 3) continue;
+    const c1 = cols[0];
+    const img = cols[2].trim();
+
+    const name = (c1.match(/\[([^\]]+)\]/) || [, ""])[1].trim();
+    let link = (c1.match(/\(([^)]+)\)/) || [, ""])[1].trim();
+    let price = (c1.match(/\{([^}]+)\}/) || [, ""])[1].trim();
+    const cat = (c1.match(/%([^%]+)%/) || [, ""])[1].trim();
+
+    if (!name) continue;
+    if (link.includes("ref=100146152")) link = link.replace("ref=100146152", "ref=100201678");
+    if (!price.startsWith("$")) price = "$" + price;
+
+    out.push({ name, link, price, cat, img });
+  }
+  allProducts = out;
+  return out;
+}
+
+/* ==== HOMEPAGE CAROUSEL ==== */
+function loadCarousel(products) {
+  const container = document.querySelector("#featuredTrack");
+  if (!container) return;
+  container.innerHTML = "";
+  const subset = products.slice(0, 20);
+  subset.forEach((p) => {
+    const card = document.createElement("div");
+    card.className =
+      "bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-lg mb-6";
+    card.innerHTML = `
+      <div class="h-40 bg-gray-100">
+        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover"
+          onerror="this.src='https://placehold.co/400x300?text=No+Image';" />
+      </div>
+      <div class="p-3 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 class="font-semibold truncate">${p.name}</h3>
+          <p class="text-[#00AEEF] font-bold mt-1">${p.price}</p>
+          <p class="text-gray-500 text-sm">${p.cat}</p>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  // smooth Gemini-style upward fade scroll
+  let y = 0;
+  const scrollSpeed = 0.4;
+  function tick() {
+    y -= scrollSpeed;
+    container.style.transform = `translateY(${y}px)`;
+    if (Math.abs(y) > container.scrollHeight / 2) y = 0;
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ==== SPREADSHEET VIEW ==== */
+function loadAllProducts() {
+  const grid = document.getElementById("productGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  allProducts.forEach((p) => {
+    const card = document.createElement("div");
+    card.className =
+      "bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col transition hover:shadow-lg";
+    card.innerHTML = `
+      <div class="w-full h-48 bg-gray-100 overflow-hidden">
+        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover"
+          onerror="this.src='https://placehold.co/400x300?text=No+Image';" />
+      </div>
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 truncate">${p.name}</h3>
+          <p class="text-[#00AEEF] font-bold mt-1">${p.price}</p>
+          <p class="text-gray-500 text-sm">${p.cat}</p>
+        </div>
+        <a href="${p.link}" target="_blank"
+          class="mt-4 inline-block bg-[#00AEEF] text-white text-center py-2 px-3 rounded-lg font-semibold hover:bg-[#0096cc]">Buy Now</a>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // search filter
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      Array.from(grid.children).forEach((card) => {
+        card.style.display = card.textContent.toLowerCase().includes(term)
+          ? ""
+          : "none";
+      });
+    });
+  }
+}
+
+/* ==== NAVIGATION HANDLER ==== */
+const origNav = window.navigate;
+window.navigate = function (view) {
+  if (typeof origNav === "function") origNav(view);
+  if (view === "data-view" && !window.productsLoaded) {
+    window.productsLoaded = true;
+    loadAllProducts();
+  }
+};
+
+/* ==== INIT ==== */
+window.addEventListener("load", async () => {
+  const products = await parseCSV();
+  loadCarousel(products);
+});
+</script>
+<!-- 👆 end CSV logic -->
